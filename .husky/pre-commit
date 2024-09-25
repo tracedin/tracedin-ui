@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Lint the code
+npm run lint
+
+# Type check
+npm run tsc
+
+# Check format check
+npm run format:check
+
