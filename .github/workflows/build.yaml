@@ -5,8 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  CONTAINER_NAME: tracedin.ui
-  DOCKER_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ env.CONTAINER_NAME }}
+  DOCKER_IMAGE: ghcr.io/${{ github.repository_owner }}/tracedin.ui
   VERSION: ${{ github.sha }}
 
 jobs:
