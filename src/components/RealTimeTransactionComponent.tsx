@@ -61,10 +61,7 @@ const generateSeriesData = (data: { value: number; statusCode: number }[], now: 
 
   const successData = data
     .filter(item => item.statusCode >= 200 && item.statusCode < 400)
-    .map((item, index) => [
-      startTime + index * ((10 * 1000) / (data.length - 1)), // 데이터 개수에 따라 분배
-      item.value
-    ])
+    .map((item, index) => [startTime + index * ((10 * 1000) / (data.length - 1)), item.value])
 
   const errorData = data
     .filter(item => item.statusCode >= 400)

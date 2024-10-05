@@ -17,7 +17,7 @@ const series = [
         fillColor: '#00E396'
       },
       {
-        x: 'ServiceClient.hello()',
+        x: '⚠️ ServiceClient.hello()',
         y: [new Date('2024-10-04T14:10:10.200').getTime(), new Date('2024-10-04T14:10:10.600').getTime()],
         fillColor: '#00E396'
       },
