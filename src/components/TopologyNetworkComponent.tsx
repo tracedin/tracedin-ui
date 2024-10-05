@@ -32,7 +32,7 @@ const options: Options = {
       from: { enabled: false }
     }
   },
-  width: '500px',
+  width: '100%',
   height: '500px'
 }
 
