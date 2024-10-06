@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { DesktopOutlined, FileOutlined, PieChartOutlined, UserOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
-import { Layout, Menu } from 'antd'
+import { Avatar, Layout, Menu } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
 const { Sider } = Layout
@@ -35,7 +35,7 @@ const MainSider: React.FC = () => {
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
       <div className="demo-logo-vertical" style={{ display: 'flex', alignItems: 'center', padding: '16px' }}>
-        <img src="/src/assets/spring-logo.png" alt="Logo" style={{ width: '40px', paddingRight: '10px' }} />
+        <Avatar icon={<DesktopOutlined />} />
         {!collapsed && <span style={{ color: '#fff', fontSize: '18px' }}>TracedIn</span>}
       </div>
       <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={handleMenuItemClick} />
