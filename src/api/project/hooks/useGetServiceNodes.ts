@@ -6,12 +6,12 @@ interface GetServiceNodesResponse {
   name: string
 }
 
-const getServiceNodes = async (projectKey: string): Promise<GetServiceNodesResponse> => {
+const getServiceNodes = async (projectKey: string): Promise<GetServiceNodesResponse[]> => {
   return await fetcher.get(`/api/v1/projects/${projectKey}/service-nodes`)
 }
 
 const useGetServiceNodes = (projectKey: string) => {
-  return useQuery<GetServiceNodesResponse, Error>({
+  return useQuery<GetServiceNodesResponse[], Error>({
     queryKey: ['getServiceNodes', projectKey],
     queryFn: () => getServiceNodes(projectKey)
   })

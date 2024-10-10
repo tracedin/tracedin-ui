@@ -2,17 +2,9 @@ import React from 'react'
 import { Avatar, List } from 'antd'
 import springboot from '@/assets/spring-logo.png'
 
-const data = [
-  {
-    serviceName: 'Hello Server'
-  },
-  {
-    serviceName: 'World Server'
-  },
-  {
-    serviceName: 'New Server'
-  }
-]
+interface ActiveServiceListProps {
+  serviceNames: string[]
+}
 
 interface ActiveServiceListItemProps {
   serviceName: string
@@ -26,11 +18,11 @@ const ActiveServiceListItemComponent: React.FC<ActiveServiceListItemProps> = ({
   </List.Item>
 )
 
-const ActiveServiceListComponent: React.FC = () => (
+const ActiveServiceListComponent: React.FC<ActiveServiceListProps> = ({ serviceNames }: ActiveServiceListProps) => (
   <List
     itemLayout="horizontal"
-    dataSource={data}
-    renderItem={item => <ActiveServiceListItemComponent serviceName={item.serviceName} />}
+    dataSource={serviceNames}
+    renderItem={item => <ActiveServiceListItemComponent serviceName={item} />}
   />
 )
 
