@@ -1,11 +1,4 @@
 #!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-# Lint the code
-npm run lint
-
-# Type check
-npm run tsc
-
-# Check format check
-npm run format:check
-
+npx lint-staged
