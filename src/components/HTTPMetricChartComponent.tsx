@@ -42,10 +42,12 @@ const options: ApexOptions = {
 }
 
 interface HTTPMetricChartComponentListProps {
-  metrics: GetHTTPRequestsPerHourResponse[]
+  httpMetricData: GetHTTPRequestsPerHourResponse[] | undefined
 }
 
-const HTTPMetricChartComponent: React.FC<HTTPMetricChartComponentListProps> = ({ metrics }) => {
+const HTTPMetricChartComponent: React.FC<HTTPMetricChartComponentListProps> = ({ httpMetricData }) => {
+  const metrics = httpMetricData ?? []
+
   const extractCategories = (metrics: GetHTTPRequestsPerHourResponse[]) =>
     metrics.map(it => moment(it.timestamp)).map(it => formatDateTime(it))
 
