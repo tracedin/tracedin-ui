@@ -39,18 +39,18 @@ const SystemTopology: React.FC = () => {
     return <div>Error: {httpMetricError.message}</div>
 
   return (
-    <Flex gap="middle" vertical style={{ height: '100vh' }}>
+    <Flex gap="middle" vertical style={{ height: '200vh' }}>
       <Flex style={{ width: '100%', gap: '20px' }}>
-        <Flex style={{ width: '60%' }}>
+        <Flex style={{ width: '50%'}}>
           <Card title="시스템 토폴로지">
             <TopologyNetworkComponent networkTopologyData={networkTopologyData} />
           </Card>
         </Flex>
-        <Flex style={{ width: '40%' }} vertical>
-          <Card title="HTTP 메트릭" bordered style={{ marginBottom: '10px', height: '50%' }}>
+        <Flex style={{ width: '50%'}} vertical>
+          <Card title="HTTP 메트릭" bordered style={{ marginBottom: '20px'}}>
             <HTTPMetricChartComponent httpMetricData={httpMetricData} />
           </Card>
-          <Card title="시스템 메트릭" bordered style={{ height: '50%' }}>
+          <Card title="시스템 메트릭">
             <SystemMetricChartComponent />
           </Card>
         </Flex>

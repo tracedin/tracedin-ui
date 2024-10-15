@@ -1,5 +1,5 @@
 export interface GetNetworkTopologyResponse {
-  serviceNodes: TopologyNode[]
+  nodes: TopologyNode[]
   edges: TopologyEdge[]
 }
 
@@ -12,4 +12,12 @@ export interface TopologyEdge {
 export interface TopologyNode {
   projectKey: string
   name: string
+  nodeType: NodeType
 }
+
+export enum NodeType {
+  SERVICE = 'SERVICE',
+  KAFKA = 'KAFKA',
+  DATABASE = 'DATABASE',
+}
+

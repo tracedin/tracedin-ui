@@ -25,7 +25,7 @@ const RealTimeTransaction: React.FC = () => {
   if (error && transactionListError) return <div>Error: {error.message}</div>
 
   return (
-    <Flex gap="middle" vertical style={{ height: '100vh' }}>
+    <Flex gap="middle" vertical style={{ height: '200vh' }}>
       <Flex style={{ gap: '20px' }}>
         <Flex style={{ width: '20%' }} vertical>
           <Card title="활성화 서비스 목록" style={{ marginBottom: '10px', height: '100%' }}>

@@ -1,18 +1,23 @@
 import VisGraph, { GraphData, GraphEvents, Options } from 'react-vis-graph-wrapper'
 import springboot from '@/assets/spring-logo.png'
+import kafka from '@/assets/kafka-logo.png'
+import h2database from '@/assets/h2-logo.png'
 import React, { useState } from 'react'
 import {
   GetNetworkTopologyResponse,
+  NodeType,
   TopologyEdge,
   TopologyNode
 } from '../api/trace/schema/GetNetworkToplogyResponse.ts'
 
 const options: Options = {
   nodes: {
-    shape: 'image'
+    shape: 'image',
+    size: 30
   },
   edges: {
     color: '#000000',
+    length: 300,
     arrows: {
       to: { enabled: false },
       from: { enabled: false }
@@ -23,7 +28,7 @@ const options: Options = {
 }
 
 const events: GraphEvents = {
-  select: function (event) {
+  select: function(event) {
     const { nodes } = event
     alert(nodes)
   }
@@ -34,17 +39,27 @@ interface TopologyNetworkComponentProps {
 }
 
 const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ networkTopologyData }) => {
-  const setupGraph = (serviceNames: string[], serviceEdges: TopologyEdge[]): GraphData => {
-    const nodes = serviceNames.map(it => ({ id: it, label: it, image: springboot }))
+  const applyImage = (type: NodeType) => {
+    const imageMap = {
+      [NodeType.SERVICE]: springboot,
+      [NodeType.DATABASE]: h2database,
+      [NodeType.KAFKA]: kafka,
+    };
+
+    return imageMap[type] || springboot
+  }
+
+  const setupGraph = (serviceNodes: TopologyNode[], serviceEdges: TopologyEdge[]): GraphData => {
+    const nodes = serviceNodes.map(it => ({ id: it.name, label: it.name, image: applyImage(it.nodeType) }))
     const edges = serviceEdges.map(it => ({ from: it.source, to: it.target, label: String(it.requestCount) }))
 
     return { nodes, edges }
   }
 
-  const serviceNames = (networkTopologyData?.serviceNodes ?? []).map((it: TopologyNode) => it.name)
+  const serviceNodes = networkTopologyData?.nodes ?? []
   const serviceEdges = networkTopologyData?.edges ?? []
 
-  const [graph] = useState<GraphData>(setupGraph(serviceNames, serviceEdges))
+  const [graph] = useState<GraphData>(setupGraph(serviceNodes, serviceEdges))
 
   return (
     <VisGraph
