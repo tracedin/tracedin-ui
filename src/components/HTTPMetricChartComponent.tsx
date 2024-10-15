@@ -2,79 +2,70 @@ import React from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import moment from 'moment'
+import { GetHTTPRequestsPerHourResponse } from '../api/metric/schema/GetHTTPRequestsPerHourResponse.ts'
 
-const HTTPMetricChartComponent: React.FC = () => {
-  const fiveHoursAgo = moment().subtract(5, 'hours')
+const formatDateTime = (date: moment.Moment) => date.format('M/D HH:MM')
 
-  const categories = Array.from({ length: 6 }, (_, index) => {
-    return fiveHoursAgo.clone().add(index, 'hours')
-  })
+const options: ApexOptions = {
+  chart: {
+    type: 'area',
+    toolbar: {
+      show: false
+    }
+  },
+  stroke: {
+    curve: 'smooth'
+  },
+  xaxis: {
+    type: 'category'
+  },
+  yaxis: {
+    title: {
+      text: 'Request Count'
+    }
+  },
+  tooltip: {
+    x: {
+      show: true
+    }
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        chart: {
+          height: 150
+        }
+      }
+    }
+  ]
+}
 
-  const formatDateTime = (date: moment.Moment) => date.format('M/D HH:00')
-  const formatSeriesDate = (date: moment.Moment) => date.format('M/D')
+interface HTTPMetricChartComponentListProps {
+  metrics: GetHTTPRequestsPerHourResponse[]
+}
 
-  const formattedCategories = categories.map(date => formatDateTime(date))
+const HTTPMetricChartComponent: React.FC<HTTPMetricChartComponentListProps> = ({ metrics }) => {
+  const extractCategories = (metrics: GetHTTPRequestsPerHourResponse[]) =>
+    metrics.map(it => moment(it.timestamp)).map(it => formatDateTime(it))
+
+  const extractRequestCounts = (metrics: GetHTTPRequestsPerHourResponse[]) => metrics.map(it => it.httpRequestCount)
+
+  const xaxisTooltipFormatter = (selected: number) => {
+    const categories = options.xaxis!.categories
+    const selectedCategory = categories.find((category: string) => category === categories[selected])
+    return formatDateTime(moment(selectedCategory))
+  }
+
+  options.xaxis!.categories = extractCategories(metrics)
+  options.tooltip!.x!.formatter = xaxisTooltipFormatter
 
   const series = [
     {
-      name: formatSeriesDate(moment().subtract(1, 'days')),
-      data: [310, 400, 280, 510, 420, 1090]
-    },
-    {
-      name: formatSeriesDate(moment()),
-      data: [110, 320, 450, 320, 340, 520]
+      name: '',
+      data: extractRequestCounts(metrics)
     }
   ]
-
-  const options: ApexOptions = {
-    chart: {
-      height: 200,
-      type: 'area',
-      toolbar: {
-        show: false
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth'
-    },
-    xaxis: {
-      type: 'category',
-      categories: formattedCategories
-    },
-    yaxis: {
-      title: {
-        text: 'Response Time (ms)'
-      }
-    },
-    tooltip: {
-      x: {
-        formatter: value => {
-          const index = formattedCategories.findIndex((_, idx) => idx === value)
-          const date = categories[index]
-          return formatDateTime(date)
-        }
-      }
-    },
-    grid: {
-      padding: {
-        left: 0,
-        right: 0
-      }
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            height: 150
-          }
-        }
-      }
-    ]
-  }
 
   return (
     <div style={{ overflow: 'hidden' }}>
