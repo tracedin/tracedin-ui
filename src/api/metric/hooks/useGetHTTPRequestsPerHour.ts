@@ -10,7 +10,9 @@ interface GetHTTPRequestsPerHourProps {
 const getHTTPRequestsPerHour = async (
   props: GetHTTPRequestsPerHourProps
 ): Promise<GetHTTPRequestsPerHourResponse[]> => {
-  return await fetcher.get(`/api/v1/metrics/http-request-count?projectKey=${props.projectKey}&name=${props.name}`)
+  return await fetcher.get(
+    `/api/v1/service-metrics/http-request-count?projectKey=${props.projectKey}&name=${props.name}`
+  )
 }
 
 const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
