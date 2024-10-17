@@ -28,7 +28,7 @@ const options: Options = {
 }
 
 const events: GraphEvents = {
-  select: function(event) {
+  select: function (event) {
     const { nodes } = event
     alert(nodes)
   }
@@ -43,8 +43,8 @@ const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ net
     const imageMap = {
       [NodeType.SERVICE]: springboot,
       [NodeType.DATABASE]: h2database,
-      [NodeType.KAFKA]: kafka,
-    };
+      [NodeType.KAFKA]: kafka
+    }
 
     return imageMap[type] || springboot
   }

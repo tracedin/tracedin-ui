@@ -9,7 +9,8 @@ import { TransactionListComponent } from '../../components/TransactionListCompon
 import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
 
 const SystemTopology: React.FC = () => {
-  const projectKey = '1206887328-a7863a66-528e-4f37-b805-04e1314fb924'
+  const projectKey = localStorage.getItem('projectKey') ?? ''
+
   const {
     data: httpMetricData,
     error: httpMetricError,
@@ -41,13 +42,13 @@ const SystemTopology: React.FC = () => {
   return (
     <Flex gap="middle" vertical style={{ height: '200vh' }}>
       <Flex style={{ width: '100%', gap: '20px' }}>
-        <Flex style={{ width: '50%'}}>
+        <Flex style={{ width: '50%' }}>
           <Card title="시스템 토폴로지">
             <TopologyNetworkComponent networkTopologyData={networkTopologyData} />
           </Card>
         </Flex>
-        <Flex style={{ width: '50%'}} vertical>
-          <Card title="HTTP 메트릭" bordered style={{ marginBottom: '20px'}}>
+        <Flex style={{ width: '50%' }} vertical>
+          <Card title="HTTP 메트릭" bordered style={{ marginBottom: '20px' }}>
             <HTTPMetricChartComponent httpMetricData={httpMetricData} />
           </Card>
           <Card title="시스템 메트릭">

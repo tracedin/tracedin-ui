@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import type { TableProps } from 'antd'
 import { DatePicker, Space, Table } from 'antd'
 import moment from 'moment'
@@ -7,18 +7,12 @@ import {
   GetTransactionListResponse,
   TransactionListItemResponse
 } from '../api/trace/schema/GetTransactionListResponse.ts'
+import { RangePickerProps } from 'antd/es/date-picker'
+import { Dayjs } from 'dayjs'
 
 const { RangePicker } = DatePicker
 
 type ColumnsType<T extends object> = TableProps<T>['columns']
-
-const formatDate = (dateString: string) => moment(dateString).format('YYYY.MM.DD HH:mm:ss')
-
-const formatResponseTime = (responseTime: number) => `${responseTime} ms`
-
-const formatAbnormalTag = (abnormal: boolean) => <AbnormalTag abnormal={abnormal} />
-
-const formatStatusCode = (status: number) => <HttpStatusTag status={status} />
 
 const columns: ColumnsType<Transaction> = [
   {
@@ -40,25 +34,25 @@ const columns: ColumnsType<Transaction> = [
     title: 'RESPONSE TIME',
     dataIndex: 'duration',
     key: 'duration',
-    render: formatResponseTime
+    render: (responseTime: number) => `${responseTime} ms`
   },
   {
     title: 'DATE',
     dataIndex: 'startDateTime',
     key: 'startDateTime',
-    render: formatDate
+    render: (dateString: string) => moment(dateString).format('YYYY.MM.DD HH:mm:ss')
   },
   {
     title: 'STATUS',
     dataIndex: 'statusCode',
     key: 'statusCode',
-    render: formatStatusCode
+    render: (status: number) => <HttpStatusTag status={status} />
   },
   {
     title: '',
     key: 'abnormal',
     dataIndex: 'abnormal',
-    render: formatAbnormalTag
+    render: (abnormal: boolean) => <AbnormalTag abnormal={abnormal} />
   }
 ]
 
@@ -70,21 +64,63 @@ interface Transaction extends TransactionListItemResponse {
   abnormal: boolean
 }
 
-interface TransactionListWithDateComponentProps extends TransactionListComponentProps {
-  startDateTime?: string
-  endDateTime?: string
-}
-
 const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ transactionListData }) => {
+  //TODO 이상치탐지 연동 필요
   const transactions: Transaction[] = (transactionListData?.results ?? []).map(it => ({ ...it, abnormal: true }))
+  const totalCount = transactionListData?.totalCount ?? 0
+  const [currentPage, setCurrentPage] = useState(1)
 
-  return <Table<Transaction> columns={columns} pagination={{ position: ['bottomCenter'] }} dataSource={transactions} />
+  const onPageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  return (
+    <Table<Transaction>
+      columns={columns}
+      pagination={{
+        position: ['bottomCenter'],
+        current: currentPage,
+        pageSize: 10,
+        total: totalCount,
+        onChange: onPageChange
+      }}
+      dataSource={transactions}
+    />
+  )
 }
 
-const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponentProps> = ({ transactionListData }) => {
+export interface TransactionRange {
+  startDate?: Dayjs
+  endDate?: Dayjs
+}
+
+interface TransactionListWithDateComponentProps extends TransactionListComponentProps {
+  transactionRange: TransactionRange
+  setTransactionRange: Dispatch<SetStateAction<TransactionRange>>
+}
+
+const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponentProps> = props => {
+  const { transactionListData, transactionRange, setTransactionRange } = props
+
+  const onOk = (value: RangePickerProps['value']) => {
+    if (!value || !value[0] || !value[1]) {
+      alert('값을 입력해주세요')
+      return
+    }
+
+    const [startDate, endDate] = value
+
+    if (startDate.isAfter(endDate)) {
+      alert('시작일이 종료일을 넘을 수 없습니다')
+      return
+    }
+
+    setTransactionRange({ startDate, endDate })
+  }
+
   return (
     <Space direction="vertical" size={15} style={{ width: '100%' }}>
-      <RangePicker renderExtraFooter={() => 'extra footer'} showTime />
+      <RangePicker showTime value={[transactionRange.startDate, transactionRange.endDate]} onOk={onOk} />
       <TransactionListComponent transactionListData={transactionListData} />
     </Space>
   )

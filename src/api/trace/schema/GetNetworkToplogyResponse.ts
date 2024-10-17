@@ -18,6 +18,5 @@ export interface TopologyNode {
 export enum NodeType {
   SERVICE = 'SERVICE',
   KAFKA = 'KAFKA',
-  DATABASE = 'DATABASE',
+  DATABASE = 'DATABASE'
 }
-
