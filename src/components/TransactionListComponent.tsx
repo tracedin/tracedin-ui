@@ -9,12 +9,13 @@ import {
 } from '../api/trace/schema/GetTransactionListResponse.ts'
 import { RangePickerProps } from 'antd/es/date-picker'
 import { Dayjs } from 'dayjs'
+import { useNavigate } from 'react-router-dom'
 
 const { RangePicker } = DatePicker
 
 type ColumnsType<T extends object> = TableProps<T>['columns']
 
-const columns: ColumnsType<Transaction> = [
+const columns: ColumnsType<TransactionListItem> = [
   {
     title: 'TRACE ID',
     dataIndex: 'traceId',
@@ -60,13 +61,18 @@ interface TransactionListComponentProps {
   transactionListData: GetTransactionListResponse | undefined
 }
 
-interface Transaction extends TransactionListItemResponse {
+interface TransactionListItem extends TransactionListItemResponse {
   abnormal: boolean
 }
 
 const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ transactionListData }) => {
+  const navigate = useNavigate()
+
   //TODO 이상치탐지 연동 필요
-  const transactions: Transaction[] = (transactionListData?.results ?? []).map(it => ({ ...it, abnormal: true }))
+  const transactions: TransactionListItem[] = (transactionListData?.results ?? []).map(it => ({
+    ...it,
+    abnormal: true
+  }))
   const totalCount = transactionListData?.totalCount ?? 0
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -74,8 +80,12 @@ const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ tra
     setCurrentPage(page)
   }
 
+  const onRowClick = (traceId: string) => {
+    navigate(`/transactions/${traceId}`)
+  }
+
   return (
-    <Table<Transaction>
+    <Table<TransactionListItem>
       columns={columns}
       pagination={{
         position: ['bottomCenter'],
@@ -83,6 +93,11 @@ const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ tra
         pageSize: 10,
         total: totalCount,
         onChange: onPageChange
+      }}
+      onRow={record => {
+        return {
+          onClick: () => onRowClick(record.traceId)
+        }
       }}
       dataSource={transactions}
     />

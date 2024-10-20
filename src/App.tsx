@@ -13,8 +13,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="" element={<MainLayout />}>
             <Route path="toplogy" element={<SystemTopology />} />
-            <Route path="realtime-tx" element={<RealTimeTransaction />} />
-            <Route path="transactions" element={<TransactionDetail />} />
+            <Route path="transactions" element={<RealTimeTransaction />} />
             <Route path="transactions/:id" element={<TransactionDetail />} />
           </Route>
         </Routes>

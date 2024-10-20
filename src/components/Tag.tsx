@@ -1,6 +1,13 @@
 import { Tag as AntTag } from 'antd'
 import React from 'react'
 
+interface ErrorTagProps {
+  statusCode: number
+}
+
+const ErrorTag: React.FC<ErrorTagProps> = ({ statusCode }) =>
+  statusCode >= 400 ? <AntTag color="red">ERROR</AntTag> : null
+
 interface AbnormalTagProps {
   abnormal: boolean
 }
@@ -23,4 +30,4 @@ const HttpStatusTag: React.FC<HttpStatusTagProps> = ({ status }) => {
   return <AntTag color={color}>{status}</AntTag>
 }
 
-export { AbnormalTag, HttpStatusTag }
+export { AbnormalTag, HttpStatusTag, ErrorTag }

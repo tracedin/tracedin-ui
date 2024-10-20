@@ -1,62 +1,61 @@
 import React from 'react'
-import { Collapse, Descriptions, Divider, Tag, Typography } from 'antd'
+import { Descriptions, Divider, Typography } from 'antd'
 import TransactionTimelineComponent from '../../components/TransactionTimelineComponent.tsx'
-
-const data = {
-  transactionId: 'da77f06ff09263210c24acf923bd9024',
-  status: ['ABNORMAL', 'ERROR'],
-  descriptions: [
-    {
-      key: '1',
-      label: '시작 시간',
-      children: '2024. 09. 29. 12:31:00'
-    },
-    {
-      key: '2',
-      label: '실행 시간',
-      children: '200ms'
-    },
-    {
-      key: '3',
-      label: 'URL',
-      children: 'http://localhost:8080/hello'
-    },
-    {
-      key: '4',
-      label: 'Status Code',
-      children: <Tag color="green">200 OK</Tag>
-    },
-    {
-      key: '5',
-      label: '서비스 명',
-      children: 'Hello Server'
-    }
-  ],
-  errors: [
-    {
-      key: '1',
-      label: 'ERRORS',
-      children: 'dasdas'
-    }
-  ]
-}
+import { useParams } from 'react-router-dom'
+import { ErrorTag, HttpStatusTag } from '../../components/Tag.tsx'
+import useGetTrace from '../../api/trace/hooks/useGetTrace.ts'
 
 const { Title } = Typography
 
 const TransactionDetail: React.FC = () => {
+  const { id: traceId } = useParams()
+
+  if (!traceId) throw Error()
+
+  const { data: transactionData, isLoading, error } = useGetTrace(traceId)
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error: {error.message}</div>
+  if (!transactionData) return <div>No Data</div>
+
+  const { span: traceMetaData } = transactionData
+  const descriptions = [
+    //TODO 시작시간 데이터 연동
+    {
+      label: '시작 시간',
+      children: '2024. 09. 29. 12:31:00'
+    },
+    {
+      label: '실행 시간',
+      children: `${traceMetaData.duration} ms`
+    },
+    {
+      label: 'HTTP Method',
+      children: traceMetaData.data['http.method']
+    },
+    {
+      label: 'Status Code',
+      children: <HttpStatusTag status={Number(traceMetaData.data['http.status_code'])}/>
+    },
+    {
+      label: '서비스 명',
+      children: traceMetaData.serviceName
+    },
+    {
+      label: 'Request IP',
+      children: traceMetaData.data['http.client_ip']
+    }
+  ]
+
   return (
     <>
-      <Title>{data.transactionId}</Title>
-      {data.status.map((status, index) => (
-        <Tag key={index} color="red">
-          {status}
-        </Tag>
-      ))}
+      <Title>{traceMetaData.data['http.url']}</Title>
+      <ErrorTag statusCode={Number(traceMetaData.data['http.status_code'])} />
+      {/*TODO 이상치여부 태그 추가*/}
       <Divider />
-      <Descriptions items={data.descriptions} />
+      <Descriptions items={descriptions} />
       <Divider />
-      <Collapse items={data.errors} defaultActiveKey={['1']} />
-      <TransactionTimelineComponent />
+      <TransactionTimelineComponent transactionData={transactionData} />
     </>
   )
 }

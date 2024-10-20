@@ -19,7 +19,7 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 const items: MenuItem[] = [
   getItem('시스템 토폴로지', 'toplogy', <PieChartOutlined />),
-  getItem('실시간 트랜잭션', 'realtime-tx', <DesktopOutlined />),
+  getItem('실시간 트랜잭션', 'transactions', <DesktopOutlined />),
   getItem('트랜잭션 검색', 'transactions', <FileOutlined />),
   getItem('사용자', 'users', <UserOutlined />)
 ]

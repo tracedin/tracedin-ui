@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Card, Flex } from 'antd'
 import ActiveServiceListComponent from '../../components/ActiveServiceListComponent.tsx'
 import useGetServiceNodes from '../../api/project/hooks/useGetServiceNodes.ts'
-import TransactionHeatmapComponent from '../../components/TransactionHeatmapComponent.tsx'
 import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
 import { TransactionListWithDateComponent, TransactionRange } from '../../components/TransactionListComponent.tsx'
+import RealTimeTransactionComponent from '../../components/RealTimeTransactionComponent.tsx'
 
 const RealTimeTransaction: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
@@ -38,7 +38,7 @@ const RealTimeTransaction: React.FC = () => {
         </Flex>
         <Flex style={{ width: '80%', height: '100%' }}>
           <Card title="실시간 트랜잭션">
-            <TransactionHeatmapComponent />
+            <RealTimeTransactionComponent />
           </Card>
         </Flex>
       </Flex>
