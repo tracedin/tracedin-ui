@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import type { TableProps } from 'antd'
 import { DatePicker, Space, Table } from 'antd'
 import moment from 'moment'
@@ -59,13 +59,19 @@ const columns: ColumnsType<TransactionListItem> = [
 
 interface TransactionListComponentProps {
   transactionListData: GetTransactionListResponse | undefined
+  currentPage: number
+  onPageChanged: Dispatch<SetStateAction<number>>
 }
 
 interface TransactionListItem extends TransactionListItemResponse {
   abnormal: boolean
 }
 
-const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ transactionListData }) => {
+const TransactionListComponent: React.FC<TransactionListComponentProps> = ({
+  transactionListData,
+  currentPage,
+  onPageChanged
+}) => {
   const navigate = useNavigate()
 
   //TODO 이상치탐지 연동 필요
@@ -74,11 +80,7 @@ const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ tra
     abnormal: true
   }))
   const totalCount = transactionListData?.totalCount ?? 0
-  const [currentPage, setCurrentPage] = useState(1)
-
-  const onPageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+  const pageSize = transactions.length
 
   const onRowClick = (traceId: string) => {
     navigate(`/transactions/${traceId}`)
@@ -90,9 +92,9 @@ const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ tra
       pagination={{
         position: ['bottomCenter'],
         current: currentPage,
-        pageSize: 10,
+        pageSize: pageSize,
         total: totalCount,
-        onChange: onPageChange
+        onChange: onPageChanged
       }}
       onRow={record => {
         return {
@@ -136,7 +138,7 @@ const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponen
   return (
     <Space direction="vertical" size={15} style={{ width: '100%' }}>
       <RangePicker showTime value={[transactionRange.startDate, transactionRange.endDate]} onOk={onOk} />
-      <TransactionListComponent transactionListData={transactionListData} />
+      <TransactionListComponent transactionListData={transactionListData} onPageChanged={() => {}} currentPage={1} />
     </Space>
   )
 }

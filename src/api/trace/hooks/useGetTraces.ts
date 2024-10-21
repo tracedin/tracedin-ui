@@ -1,6 +1,6 @@
 import fetcher from '../../fetcher.ts'
 import { useQuery } from '@tanstack/react-query'
-import { GetTransactionListResponse } from '../schema/GetTransactionListResponse.ts'
+import { GetTransactionListResponse, PagingKey } from '../schema/GetTransactionListResponse.ts'
 import { Dayjs } from 'dayjs'
 
 interface GetTracesProps {
@@ -9,6 +9,7 @@ interface GetTracesProps {
   startTime?: Dayjs
   endTime?: Dayjs
   size?: number
+  afterKey?: PagingKey
 }
 
 const datetimeFormatter = 'YYYY-MM-DDTHH:mm:ss'
@@ -20,7 +21,9 @@ const getTraces = async (props: GetTracesProps): Promise<GetTransactionListRespo
       serviceName: props.serviceName,
       startTime: props.startTime?.format(datetimeFormatter),
       endTime: props.endTime?.format(datetimeFormatter),
-      size: props.size ?? 10
+      size: props.size ?? 10,
+      'afterKey[traceId]': props.afterKey?.traceId,
+      'afterKey[startEpochMillis]': props.afterKey?.startEpochMillis
     }
   })
 }

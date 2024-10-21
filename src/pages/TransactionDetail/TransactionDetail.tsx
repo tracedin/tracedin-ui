@@ -35,7 +35,7 @@ const TransactionDetail: React.FC = () => {
     },
     {
       label: 'Status Code',
-      children: <HttpStatusTag status={Number(traceMetaData.data['http.status_code'])}/>
+      children: <HttpStatusTag status={Number(traceMetaData.data['http.status_code'])} />
     },
     {
       label: '서비스 명',

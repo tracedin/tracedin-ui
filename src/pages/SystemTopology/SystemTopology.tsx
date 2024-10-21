@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TopologyNetworkComponent from '../../components/TopologyNetworkComponent.tsx'
 import { Card, Flex } from 'antd'
 import HTTPMetricChartComponent from '../../components/HTTPMetricChartComponent.tsx'
@@ -7,9 +7,17 @@ import useGetHTTPRequestsPerHour from '../../api/metric/hooks/useGetHTTPRequests
 import useGetNetworkTopology from '../../api/trace/hooks/useGetNetworkTopology.ts'
 import { TransactionListComponent } from '../../components/TransactionListComponent.tsx'
 import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
+import { PagingKey } from '../../api/trace/schema/GetTransactionListResponse.ts'
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pagingKeys] = useState<PagingKey[]>([])
+
+  const onPageChanged = (page: number) => {
+    if (page === currentPage) return
+    setCurrentPage(page)
+  }
 
   const {
     data: httpMetricData,
@@ -32,7 +40,8 @@ const SystemTopology: React.FC = () => {
     isLoading: isTransactionListLoading
   } = useGetTraces({
     projectKey: projectKey,
-    serviceName: 'tracedin-client'
+    serviceName: 'tracedin-client',
+    afterKey: pagingKeys[currentPage]
   })
 
   if (isHttpMetricLoading || isNetworkTopologyLoading || isTransactionListLoading) return <div>Loading...</div>
@@ -56,7 +65,11 @@ const SystemTopology: React.FC = () => {
           </Card>
         </Flex>
       </Flex>
-      <TransactionListComponent transactionListData={transactionListData} />
+      <TransactionListComponent
+        transactionListData={transactionListData}
+        currentPage={currentPage}
+        onPageChanged={onPageChanged}
+      />
     </Flex>
   )
 }
