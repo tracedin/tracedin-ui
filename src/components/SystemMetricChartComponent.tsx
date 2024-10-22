@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
+import { SystemMetricStream } from '../api/metric/hooks/useSystemMetricStream.ts'
 
 const options: ApexOptions = {
   chart: {
@@ -20,7 +21,7 @@ const options: ApexOptions = {
     show: false
   },
   xaxis: {
-    categories: ['CPU', 'Memory', 'I/O', 'GC'],
+    categories: ['Memory', 'Heap', 'CPU', 'Disk'],
     labels: {
       style: {
         colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560'],
@@ -37,26 +38,25 @@ const options: ApexOptions = {
   }
 }
 
-const SystemMetricChartComponent: React.FC = () => {
-  const [series, setSeries] = useState([
-    {
-      name: '사용률',
-      data: [70, 50, 80, 30]
-    }
-  ])
+interface SystemMetricChartComponentProp {
+  systemMetricData: SystemMetricStream[] | undefined
+}
 
-  const generateSeriesDataInterval = () =>
-    setInterval(() => {
-      setSeries(prevSeries => {
-        const newData = prevSeries[0].data.map(() => Math.floor(Math.random() * 101))
-        return [{ name: '사용률', data: newData }]
-      })
-    }, 1000)
+const SystemMetricChartComponent: React.FC<SystemMetricChartComponentProp> = ({ systemMetricData }) => {
+  const systemMetrics = systemMetricData ?? []
+  const [series, setSeries] = useState<ApexAxisChartSeries>([])
 
   useEffect(() => {
-    const interval = generateSeriesDataInterval()
-    return () => clearInterval(interval)
-  }, [])
+    setSeries([
+      {
+        name: '사용률',
+        data: systemMetrics
+          .filter(it => it.unit === 'percent')
+          .map(it => it.value)
+          .map(it => Math.ceil(it))
+      }
+    ])
+  }, [systemMetricData])
 
   return <ReactApexChart options={options} series={series} type="bar" height={200} />
 }

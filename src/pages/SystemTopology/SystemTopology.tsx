@@ -8,6 +8,7 @@ import useGetNetworkTopology from '../../api/trace/hooks/useGetNetworkTopology.t
 import { TransactionListComponent } from '../../components/TransactionListComponent.tsx'
 import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
 import { PagingKey } from '../../api/trace/schema/GetTransactionListResponse.ts'
+import useSystemMetricStream from '../../api/metric/hooks/useSystemMetricStream.ts'
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
@@ -32,6 +33,8 @@ const SystemTopology: React.FC = () => {
     afterKey: pagingKeys[currentPage]
   })
 
+  const systemMetricData = useSystemMetricStream({ projectKey: projectKey, serviceName: 'tracedin-client' })
+
   return (
     <Flex gap="middle" vertical style={{ height: '200vh' }}>
       <Flex style={{ width: '100%', gap: '20px' }}>
@@ -45,7 +48,7 @@ const SystemTopology: React.FC = () => {
             <HTTPMetricChartComponent httpMetricData={httpMetricData} />
           </Card>
           <Card title="시스템 메트릭">
-            <SystemMetricChartComponent />
+            <SystemMetricChartComponent systemMetricData={systemMetricData} />
           </Card>
         </Flex>
       </Flex>
