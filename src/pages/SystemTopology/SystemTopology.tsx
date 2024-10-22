@@ -19,34 +19,18 @@ const SystemTopology: React.FC = () => {
     setCurrentPage(page)
   }
 
-  const {
-    data: httpMetricData,
-    error: httpMetricError,
-    isLoading: isHttpMetricLoading
-  } = useGetHTTPRequestsPerHour({
+  const { data: httpMetricData } = useGetHTTPRequestsPerHour({
     projectKey: projectKey,
     name: 'tracedin-client'
   })
 
-  const {
-    data: networkTopologyData,
-    error: networkTopologyError,
-    isLoading: isNetworkTopologyLoading
-  } = useGetNetworkTopology(projectKey)
+  const { data: networkTopologyData } = useGetNetworkTopology(projectKey)
 
-  const {
-    data: transactionListData,
-    error: transactionListError,
-    isLoading: isTransactionListLoading
-  } = useGetTraces({
+  const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
     serviceName: 'tracedin-client',
     afterKey: pagingKeys[currentPage]
   })
-
-  if (isHttpMetricLoading || isNetworkTopologyLoading || isTransactionListLoading) return <div>Loading...</div>
-  if (httpMetricError && networkTopologyError && transactionListError)
-    return <div>Error: {httpMetricError.message}</div>
 
   return (
     <Flex gap="middle" vertical style={{ height: '200vh' }}>

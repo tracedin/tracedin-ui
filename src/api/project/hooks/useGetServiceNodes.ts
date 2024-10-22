@@ -1,5 +1,5 @@
 import fetcher from '../../fetcher.ts'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 interface GetServiceNodesResponse {
   projectKey: string
@@ -11,7 +11,7 @@ const getServiceNodes = async (projectKey: string): Promise<GetServiceNodesRespo
 }
 
 const useGetServiceNodes = (projectKey: string) => {
-  return useQuery<GetServiceNodesResponse[], Error>({
+  return useSuspenseQuery<GetServiceNodesResponse[], Error>({
     queryKey: ['getServiceNodes', projectKey],
     queryFn: () => getServiceNodes(projectKey)
   })

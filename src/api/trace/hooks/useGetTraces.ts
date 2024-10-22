@@ -1,5 +1,5 @@
 import fetcher from '../../fetcher.ts'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { GetTransactionListResponse, PagingKey } from '../schema/GetTransactionListResponse.ts'
 import { Dayjs } from 'dayjs'
 
@@ -29,7 +29,7 @@ const getTraces = async (props: GetTracesProps): Promise<GetTransactionListRespo
 }
 
 const useGetTraces = (props: GetTracesProps) => {
-  return useQuery<GetTransactionListResponse, Error>({
+  return useSuspenseQuery<GetTransactionListResponse, Error>({
     queryKey: ['getTraces', props],
     queryFn: () => getTraces(props)
   })

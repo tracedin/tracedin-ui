@@ -1,5 +1,5 @@
 import fetcher from '../../fetcher.ts'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { GetHTTPRequestsPerHourResponse } from '../schema/GetHTTPRequestsPerHourResponse.ts'
 
 interface GetHTTPRequestsPerHourProps {
@@ -16,7 +16,7 @@ const getHTTPRequestsPerHour = async (
 }
 
 const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
-  return useQuery<GetHTTPRequestsPerHourResponse[], Error>({
+  return useSuspenseQuery<GetHTTPRequestsPerHourResponse[], Error>({
     queryKey: ['getHTTPRequest', props.name],
     queryFn: () => getHTTPRequestsPerHour(props)
   })

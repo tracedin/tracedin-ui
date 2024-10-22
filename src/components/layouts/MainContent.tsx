@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Breadcrumb, Layout } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import Loading from '../common/Loading.tsx'
 
 const { Content } = Layout
 
@@ -18,7 +19,9 @@ const MainContent: React.FC = () => {
   return (
     <Content style={{ margin: '0 16px' }}>
       <Breadcrumb style={{ margin: '16px 0' }} items={items} />
-      <Outlet />
+      <Suspense fallback={<Loading />}>
+        <Outlet />
+      </Suspense>
     </Content>
   )
 }

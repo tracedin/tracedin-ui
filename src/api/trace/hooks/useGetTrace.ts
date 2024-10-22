@@ -1,5 +1,5 @@
 import fetcher from '../../fetcher.ts'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { GetTransactionResponse } from '../schema/GetTransactionResponse.ts'
 
 const getTrace = async (traceId: string): Promise<GetTransactionResponse> => {
@@ -7,7 +7,7 @@ const getTrace = async (traceId: string): Promise<GetTransactionResponse> => {
 }
 
 const useGetTrace = (traceId: string) => {
-  return useQuery<GetTransactionResponse, Error>({
+  return useSuspenseQuery<GetTransactionResponse, Error>({
     queryKey: ['getTrace', traceId],
     queryFn: () => getTrace(traceId)
   })
