@@ -14,13 +14,7 @@ const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
 
   const [serviceName, setServiceName] = useState<string>()
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pagingKeys] = useState<PagingKey[]>([])
-
-  const onPageChanged = (page: number) => {
-    if (page === currentPage) return
-    setCurrentPage(page)
-  }
+  const [pagingKey, setPagingKey] = useState<PagingKey>()
 
   const { data: httpMetricData } = useGetHTTPRequestsPerHour({
     projectKey: projectKey,
@@ -32,7 +26,7 @@ const SystemTopology: React.FC = () => {
   const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
     serviceName: serviceName,
-    afterKey: pagingKeys[currentPage]
+    afterKey: pagingKey
   })
 
   const systemMetricData = useSystemMetricStream({ projectKey: projectKey, serviceName: 'tracedin-client' })
@@ -54,11 +48,7 @@ const SystemTopology: React.FC = () => {
           </Card>
         </Flex>
       </Flex>
-      <TransactionListComponent
-        transactionListData={transactionListData}
-        currentPage={currentPage}
-        onPageChanged={onPageChanged}
-      />
+      <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey}/>
     </Flex>
   )
 }

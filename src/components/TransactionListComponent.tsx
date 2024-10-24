@@ -1,15 +1,16 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import type { TableProps } from 'antd'
-import { DatePicker, Space, Table } from 'antd'
+import { DatePicker, Divider, Skeleton, Space, Table } from 'antd'
 import moment from 'moment'
 import { AbnormalTag, HttpStatusTag } from './Tag.tsx'
 import {
-  GetTransactionListResponse,
+  GetTransactionListResponse, PagingKey,
   TransactionListItemResponse
 } from '../api/trace/schema/GetTransactionListResponse.ts'
 import { RangePickerProps } from 'antd/es/date-picker'
 import { Dayjs } from 'dayjs'
 import { useNavigate } from 'react-router-dom'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 const { RangePicker } = DatePicker
 
@@ -59,52 +60,71 @@ const columns: ColumnsType<TransactionListItem> = [
 
 interface TransactionListComponentProps {
   transactionListData: GetTransactionListResponse | undefined
-  currentPage: number
-  onPageChanged: (page: number) => void
+  setPagingKey: Dispatch<SetStateAction<PagingKey | undefined>>
 }
 
 interface TransactionListItem extends TransactionListItemResponse {
   abnormal: boolean
 }
 
-const TransactionListComponent: React.FC<TransactionListComponentProps> = ({
-  transactionListData,
-  currentPage,
-  onPageChanged
-}) => {
-  const navigate = useNavigate()
-
+const TransactionListComponent: React.FC<TransactionListComponentProps> = ({transactionListData, setPagingKey}) => {
   //TODO 이상치탐지 연동 필요
   const transactions: TransactionListItem[] = (transactionListData?.results ?? []).map(it => ({
     ...it,
     abnormal: true
   }))
   const totalCount = transactionListData?.totalCount ?? 0
-  const pageSize = transactions.length
+
+  const [data, setData] = useState(transactions);
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (transactionListData?.results) {
+      const newTransactions: TransactionListItem[] = transactionListData.results.map(it => ({
+        ...it,
+        abnormal: false
+      }));
+      setData(prevData => [...prevData, ...newTransactions]);
+    }
+  }, [transactionListData]);
 
   const onRowClick = (traceId: string) => {
     navigate(`/transactions/${traceId}`)
   }
 
   return (
-    <Table<TransactionListItem>
-      columns={columns}
-      pagination={{
-        position: ['bottomCenter'],
-        current: currentPage,
-        pageSize: pageSize,
-        total: totalCount,
-        onChange: onPageChanged
+    <div
+      id="scrollableDiv"
+      style={{
+        height: 400,
+        overflow: 'auto',
       }}
-      onRow={record => {
-        return {
-          onClick: () => onRowClick(record.traceId)
-        }
-      }}
-      dataSource={transactions}
-    />
-  )
-}
+    >
+      <InfiniteScroll
+        dataLength={data.length}
+        next={()=>{
+          setPagingKey(transactionListData?.afterKey)
+        }}
+        hasMore={data.length < totalCount}
+        loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+        endMessage={<Divider plain>마지막 데이터 입니다 🤐</Divider>}
+        scrollableTarget="scrollableDiv"
+      >
+        <Table<TransactionListItem>
+          columns={columns}
+          pagination={false}
+          onRow={record => {
+            return {
+              onClick: () => onRowClick(record.traceId)
+            }
+          }}
+          dataSource={data}
+        />
+      </InfiniteScroll>
+    </div>
+  );
+};
+
 
 export interface TransactionRange {
   startDate?: Dayjs
@@ -117,7 +137,7 @@ interface TransactionListWithDateComponentProps extends TransactionListComponent
 }
 
 const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponentProps> = props => {
-  const { transactionListData, transactionRange, setTransactionRange } = props
+  const { transactionListData, transactionRange, setTransactionRange, setPagingKey } = props
 
   const onOk = (value: RangePickerProps['value']) => {
     if (!value || !value[0] || !value[1]) {
@@ -138,7 +158,7 @@ const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponen
   return (
     <Space direction="vertical" size={15} style={{ width: '100%' }}>
       <RangePicker showTime value={[transactionRange.startDate, transactionRange.endDate]} onOk={onOk} />
-      <TransactionListComponent transactionListData={transactionListData} onPageChanged={() => {}} currentPage={1} />
+      <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey}/>
     </Space>
   )
 }

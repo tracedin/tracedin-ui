@@ -25,6 +25,7 @@
     "react-apexcharts": "^1.4.1",
     "react-dom": "^18.3.1",
     "react-graph-vis": "^1.0.7",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "6.0.2",
     "react-router-hash-link": "2.4.3",
     "react-vis-graph-wrapper": "^0.1.3"

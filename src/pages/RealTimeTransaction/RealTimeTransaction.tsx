@@ -13,20 +13,14 @@ const RealTimeTransaction: React.FC = () => {
 
   const [serviceName, setServiceName] = useState<string>()
   const [transactionRange, setTransactionRange] = useState<TransactionRange>({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pagingKeys, setPagingKeys] = useState<PagingKey[]>([])
-
-  const onPageChanged = (page: number) => {
-    if (page === currentPage) return
-    setCurrentPage(page)
-    setPagingKeys(pagingKeys)
-  }
+  const [pagingKey, setPagingKey] = useState<PagingKey>()
 
   const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
     serviceName: serviceName,
     startTime: transactionRange.startDate,
-    endTime: transactionRange.endDate
+    endTime: transactionRange.endDate,
+    afterKey:pagingKey
   })
 
   const { data: serviceNodes } = useGetServiceNodes(projectKey)
@@ -58,8 +52,7 @@ const RealTimeTransaction: React.FC = () => {
           transactionListData={transactionListData}
           transactionRange={transactionRange}
           setTransactionRange={setTransactionRange}
-          currentPage={currentPage}
-          onPageChanged={onPageChanged}
+          setPagingKey={setPagingKey}
         />
       </Card>
     </Flex>
