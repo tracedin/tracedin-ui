@@ -60,7 +60,7 @@ const columns: ColumnsType<TransactionListItem> = [
 interface TransactionListComponentProps {
   transactionListData: GetTransactionListResponse | undefined
   currentPage: number
-  onPageChanged: Dispatch<SetStateAction<number>>
+  onPageChanged: (page: number) => void
 }
 
 interface TransactionListItem extends TransactionListItemResponse {

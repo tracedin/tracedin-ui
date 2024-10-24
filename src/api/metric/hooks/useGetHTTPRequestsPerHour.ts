@@ -5,13 +5,15 @@ import { StatisticsResponse } from '../schema/StatisticsResponse.ts'
 
 interface GetHTTPRequestsPerHourProps {
   projectKey: string
-  name: string
+  name?: string
 }
 
 const getHTTPRequestsPerHour = async (
   props: GetHTTPRequestsPerHourProps
 ): Promise<StatisticsResponse<GetHTTPRequestsPerHourResponse[]>> => {
-  return await fetcher.get(`/api/v1/projects/statistics/HTTP_TPS?projectKey=${props.projectKey}&name=${props.name}`)
+  return await fetcher.get('/api/v1/projects/statistics/HTTP_TPS', {
+    params: props
+  })
 }
 
 const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {

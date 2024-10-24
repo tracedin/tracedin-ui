@@ -2,7 +2,7 @@ import VisGraph, { GraphData, GraphEvents, Options } from 'react-vis-graph-wrapp
 import springboot from '@/assets/spring-logo.png'
 import kafka from '@/assets/kafka-logo.png'
 import h2database from '@/assets/h2-logo.png'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import {
   GetNetworkTopologyResponse,
   NodeType,
@@ -27,18 +27,12 @@ const options: Options = {
   height: '500px'
 }
 
-const events: GraphEvents = {
-  select: function (event) {
-    const { nodes } = event
-    alert(nodes)
-  }
-}
-
 interface TopologyNetworkComponentProps {
   networkTopologyData: GetNetworkTopologyResponse | undefined
+  setServiceName: Dispatch<SetStateAction<string | undefined>>
 }
 
-const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ networkTopologyData }) => {
+const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ networkTopologyData, setServiceName }) => {
   const applyImage = (type: NodeType) => {
     const imageMap = {
       [NodeType.SERVICE]: springboot,
@@ -61,17 +55,22 @@ const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ net
 
   const [graph] = useState<GraphData>(setupGraph(serviceNodes, serviceEdges))
 
-  return (
-    <VisGraph
-      graph={graph}
-      options={options}
-      events={events}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      getNetwork={(network: any) => {
-        console.log(network)
-      }}
-    />
-  )
+  const isServiceNode = (serviceName: string) => {
+    //FIXME 서비스 노드 조건 수정필요
+    return graph.nodes.find(node => node.id == serviceName)?.image === springboot
+  }
+
+  const events: GraphEvents = {
+    select: function (event) {
+      const { nodes } = event
+
+      if (isServiceNode(nodes[0])) {
+        setServiceName(nodes[0])
+      }
+    }
+  }
+
+  return <VisGraph graph={graph} options={options} events={events} />
 }
 
 export default TopologyNetworkComponent

@@ -6,15 +6,25 @@ import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
 import { TransactionListWithDateComponent, TransactionRange } from '../../components/TransactionListComponent.tsx'
 import TransactionHeatmapComponent from '../../components/TransactionHeatmapComponent.tsx'
 import useGetTransactionHeatmap from '../../api/metric/hooks/useGetTransactionHeatmap.ts'
+import { PagingKey } from '../../api/trace/schema/GetTransactionListResponse.ts'
 
 const RealTimeTransaction: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
 
+  const [serviceName, setServiceName] = useState<string>()
   const [transactionRange, setTransactionRange] = useState<TransactionRange>({})
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pagingKeys, setPagingKeys] = useState<PagingKey[]>([])
+
+  const onPageChanged = (page: number) => {
+    if (page === currentPage) return
+    setCurrentPage(page)
+    setPagingKeys(pagingKeys)
+  }
 
   const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
-    serviceName: 'tracedin-client',
+    serviceName: serviceName,
     startTime: transactionRange.startDate,
     endTime: transactionRange.endDate
   })
@@ -22,8 +32,8 @@ const RealTimeTransaction: React.FC = () => {
   const { data: serviceNodes } = useGetServiceNodes(projectKey)
 
   const { data: transactionHeatmapData } = useGetTransactionHeatmap({
-    projectKey: projectKey
-    //TODO serviceName 추가
+    projectKey: projectKey,
+    serviceName: serviceName
   })
 
   return (
@@ -31,7 +41,10 @@ const RealTimeTransaction: React.FC = () => {
       <Flex style={{ gap: '20px' }}>
         <Flex style={{ width: '20%' }} vertical>
           <Card title="활성화 서비스 목록" style={{ marginBottom: '10px', height: '100%' }}>
-            <ActiveServiceListComponent serviceNames={serviceNodes!.map(it => it.name)} />
+            <ActiveServiceListComponent
+              serviceNames={serviceNodes!.map(it => it.name)}
+              setServiceName={setServiceName}
+            />
           </Card>
         </Flex>
         <Flex style={{ width: '80%', height: '100%' }}>
@@ -45,6 +58,8 @@ const RealTimeTransaction: React.FC = () => {
           transactionListData={transactionListData}
           transactionRange={transactionRange}
           setTransactionRange={setTransactionRange}
+          currentPage={currentPage}
+          onPageChanged={onPageChanged}
         />
       </Card>
     </Flex>

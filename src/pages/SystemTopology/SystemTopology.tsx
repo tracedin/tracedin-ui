@@ -12,6 +12,8 @@ import useSystemMetricStream from '../../api/metric/hooks/useSystemMetricStream.
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
+
+  const [serviceName, setServiceName] = useState<string>()
   const [currentPage, setCurrentPage] = useState(1)
   const [pagingKeys] = useState<PagingKey[]>([])
 
@@ -22,14 +24,14 @@ const SystemTopology: React.FC = () => {
 
   const { data: httpMetricData } = useGetHTTPRequestsPerHour({
     projectKey: projectKey,
-    name: 'tracedin-client'
+    name: serviceName
   })
 
   const { data: networkTopologyData } = useGetNetworkTopology(projectKey)
 
   const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
-    serviceName: 'tracedin-client',
+    serviceName: serviceName,
     afterKey: pagingKeys[currentPage]
   })
 
@@ -39,8 +41,8 @@ const SystemTopology: React.FC = () => {
     <Flex gap="middle" vertical style={{ height: '200vh' }}>
       <Flex style={{ width: '100%', gap: '20px' }}>
         <Flex style={{ width: '50%' }}>
-          <Card title="시스템 토폴로지">
-            <TopologyNetworkComponent networkTopologyData={networkTopologyData} />
+          <Card title="시스템 토폴로지" style={{ width: '100%' }}>
+            <TopologyNetworkComponent networkTopologyData={networkTopologyData} setServiceName={setServiceName} />
           </Card>
         </Flex>
         <Flex style={{ width: '50%' }} vertical>

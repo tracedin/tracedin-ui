@@ -5,7 +5,7 @@ import { Dayjs } from 'dayjs'
 
 interface GetTracesProps {
   projectKey: string
-  serviceName: string
+  serviceName?: string
   startTime?: Dayjs
   endTime?: Dayjs
   size?: number
