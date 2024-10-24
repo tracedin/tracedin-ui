@@ -29,7 +29,7 @@ const useSystemMetricStream = ({ projectKey, serviceName }: SystemMetricStreamPr
     return () => {
       eventSource.close()
     }
-  }, [])
+  }, [projectKey, serviceName])
 
   return systemMetrics
 }

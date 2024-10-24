@@ -43,17 +43,15 @@ interface SystemMetricChartComponentProp {
 }
 
 const SystemMetricChartComponent: React.FC<SystemMetricChartComponentProp> = ({ systemMetricData }) => {
-  const systemMetrics = systemMetricData ?? []
   const [series, setSeries] = useState<ApexAxisChartSeries>([])
 
   useEffect(() => {
     setSeries([
       {
         name: '사용률',
-        data: systemMetrics
+        data: (systemMetricData ?? [])
           .filter(it => it.unit === 'percent')
-          .map(it => it.value)
-          .map(it => Math.ceil(it))
+          .map(it => Math.ceil(it.value))
       }
     ])
   }, [systemMetricData])

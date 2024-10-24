@@ -48,7 +48,7 @@ const SystemTopology: React.FC = () => {
           </Card>
         </Flex>
       </Flex>
-      <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey}/>
+      <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey} />
     </Flex>
   )
 }

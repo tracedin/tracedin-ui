@@ -33,7 +33,8 @@ const options: ApexOptions = {
       useFillColorAsStroke: true,
       colorScale: {
         ranges: [
-          { from: 0, to: 20, name: 'low', color: '#FFFFA0' },
+          { from: 0, to: 0, name: 'none', color: '#FFFFA0' },
+          { from: 1, to: 20, name: 'low', color: '#CCFF66' },
           { from: 21, to: 50, name: 'medium', color: '#128FD9' },
           { from: 51, to: 80, name: 'high', color: '#FFB200' },
           { from: 81, to: 100, name: 'extreme', color: '#FF0000' }
@@ -69,18 +70,24 @@ interface TransactionHeatmapComponentProps {
 const createSeries = (transactionHeatmapData: EndTimeBucket[]) => {
   const transformedData: Series[] = []
 
+  const responseTimes = Array.from({ length: 21 }, (_, index) => index * 100)
+
+  responseTimes.forEach(time => {
+    const responseTimeKey = time + 'ms'
+    const series = { name: responseTimeKey, data: [] }
+    transformedData.push(series)
+  })
+
   transactionHeatmapData.forEach(transaction => {
+    const endTime = transaction.endTime
+
     transaction.responseTimeBuckets.forEach(bucket => {
-      const endTime = transaction.endTime
       const responseTimeKey = bucket.responseTime + 'ms'
 
-      let series = transformedData.find(s => s.name === responseTimeKey)
-      if (!series) {
-        series = { name: responseTimeKey, data: [] }
-        transformedData.push(series)
+      const series = transformedData.find(s => s.name === responseTimeKey)
+      if (series) {
+        series.data.push([new Date(endTime).getTime(), bucket.count])
       }
-
-      series.data.push([new Date(endTime).getTime(), bucket.count])
     })
   })
 

@@ -20,7 +20,7 @@ const RealTimeTransaction: React.FC = () => {
     serviceName: serviceName,
     startTime: transactionRange.startDate,
     endTime: transactionRange.endDate,
-    afterKey:pagingKey
+    afterKey: pagingKey
   })
 
   const { data: serviceNodes } = useGetServiceNodes(projectKey)
