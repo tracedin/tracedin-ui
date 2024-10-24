@@ -39,7 +39,7 @@ const options: ApexOptions = {
 }
 
 interface SystemMetricChartComponentProp {
-  systemMetricData: SystemMetricStream[] | undefined
+  systemMetricData: SystemMetricStream[]
 }
 
 const SystemMetricChartComponent: React.FC<SystemMetricChartComponentProp> = ({ systemMetricData }) => {

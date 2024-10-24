@@ -12,7 +12,7 @@ export interface SystemMetricStream {
 }
 
 const useSystemMetricStream = ({ projectKey, serviceName }: SystemMetricStreamProps) => {
-  const [systemMetrics, setSystemMetrics] = useState<SystemMetricStream>()
+  const [systemMetrics, setSystemMetrics] = useState<SystemMetricStream[]>([])
 
   useEffect(() => {
     const url = `${import.meta.env.VITE_TRACEDIN_API}/api/v1/service-metrics/subscribe?projectKey=${projectKey}&serviceName=${serviceName}`

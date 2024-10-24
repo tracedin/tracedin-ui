@@ -4,29 +4,27 @@ import ActiveServiceListComponent from '../../components/ActiveServiceListCompon
 import useGetServiceNodes from '../../api/project/hooks/useGetServiceNodes.ts'
 import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
 import { TransactionListWithDateComponent, TransactionRange } from '../../components/TransactionListComponent.tsx'
-import RealTimeTransactionComponent from '../../components/RealTimeTransactionComponent.tsx'
+import TransactionHeatmapComponent from '../../components/TransactionHeatmapComponent.tsx'
+import useGetTransactionHeatmap from '../../api/metric/hooks/useGetTransactionHeatmap.ts'
 
 const RealTimeTransaction: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
 
   const [transactionRange, setTransactionRange] = useState<TransactionRange>({})
 
-  const {
-    data: transactionListData,
-    error: transactionListError,
-    isLoading: isTransactionListLoading
-  } = useGetTraces({
+  const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
     serviceName: 'tracedin-client',
     startTime: transactionRange.startDate,
     endTime: transactionRange.endDate
   })
 
-  const { data: serviceNodes, error, isLoading } = useGetServiceNodes(projectKey)
+  const { data: serviceNodes } = useGetServiceNodes(projectKey)
 
-  //FIXME 공통로직 추출
-  if (isLoading || isTransactionListLoading) return <div>Loading...</div>
-  if (error && transactionListError) return <div>Error: {error.message}</div>
+  const { data: transactionHeatmapData } = useGetTransactionHeatmap({
+    projectKey: projectKey
+    //TODO serviceName 추가
+  })
 
   return (
     <Flex gap="middle" vertical style={{ height: '200vh' }}>
@@ -37,8 +35,8 @@ const RealTimeTransaction: React.FC = () => {
           </Card>
         </Flex>
         <Flex style={{ width: '80%', height: '100%' }}>
-          <Card title="실시간 트랜잭션">
-            <RealTimeTransactionComponent />
+          <Card title="트랜잭션 히트맵">
+            <TransactionHeatmapComponent transactionHeatmapData={transactionHeatmapData} />
           </Card>
         </Flex>
       </Flex>

@@ -2,10 +2,7 @@ import React from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import moment from 'moment'
-import {
-  GetHTTPRequestsPerHourResponse,
-  HTTPRequestPerHourItemResponse
-} from '../api/metric/schema/GetHTTPRequestsPerHourResponse.ts'
+import { GetHTTPRequestsPerHourResponse } from '../api/metric/schema/GetHTTPRequestsPerHourResponse.ts'
 
 const formatDateTime = (date: moment.Moment) => date.format('M/D HH:MM')
 
@@ -45,16 +42,16 @@ const options: ApexOptions = {
 }
 
 interface HTTPMetricChartComponentListProps {
-  httpMetricData: GetHTTPRequestsPerHourResponse | undefined
+  httpMetricData: GetHTTPRequestsPerHourResponse[] | undefined
 }
 
 const HTTPMetricChartComponent: React.FC<HTTPMetricChartComponentListProps> = ({ httpMetricData }) => {
-  const metrics = httpMetricData?.statistic ?? []
+  const metrics = httpMetricData ?? []
 
-  const extractCategories = (metrics: HTTPRequestPerHourItemResponse[]) =>
+  const extractCategories = (metrics: GetHTTPRequestsPerHourResponse[]) =>
     metrics.map(it => moment(it.timestamp)).map(it => formatDateTime(it))
 
-  const extractRequestCounts = (metrics: HTTPRequestPerHourItemResponse[]) => metrics.map(it => it.httpRequestCount)
+  const extractRequestCounts = (metrics: GetHTTPRequestsPerHourResponse[]) => metrics.map(it => it.httpRequestCount)
 
   const xaxisTooltipFormatter = (selected: number) => {
     const categories = options.xaxis!.categories
