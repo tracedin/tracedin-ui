@@ -7,16 +7,12 @@ interface GetHTTPRequestsPerHourProps {
   name: string
 }
 
-const getHTTPRequestsPerHour = async (
-  props: GetHTTPRequestsPerHourProps
-): Promise<GetHTTPRequestsPerHourResponse[]> => {
-  return await fetcher.get(
-    `/api/v1/service-metrics/http-request-count?projectKey=${props.projectKey}&name=${props.name}`
-  )
+const getHTTPRequestsPerHour = async (props: GetHTTPRequestsPerHourProps): Promise<GetHTTPRequestsPerHourResponse> => {
+  return await fetcher.get(`/api/v1/projects/statistics/HTTP_TPS?projectKey=${props.projectKey}&name=${props.name}`)
 }
 
 const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
-  return useSuspenseQuery<GetHTTPRequestsPerHourResponse[], Error>({
+  return useSuspenseQuery<GetHTTPRequestsPerHourResponse, Error>({
     queryKey: ['getHTTPRequest', props.name],
     queryFn: () => getHTTPRequestsPerHour(props)
   })
