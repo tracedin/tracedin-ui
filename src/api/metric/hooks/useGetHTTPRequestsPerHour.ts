@@ -2,6 +2,7 @@ import fetcher from '../../fetcher.ts'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { GetHTTPRequestsPerHourResponse } from '../schema/GetHTTPRequestsPerHourResponse.ts'
 import { StatisticsResponse } from '../schema/StatisticsResponse.ts'
+import moment from 'moment'
 
 interface GetHTTPRequestsPerHourProps {
   projectKey: string
@@ -16,6 +17,10 @@ const getHTTPRequestsPerHour = async (
   })
 }
 
+const orderByTimestamp = (response: GetHTTPRequestsPerHourResponse[]) =>
+  response.sort((a, b) => moment(a.timestamp).diff(moment(b.timestamp)))
+const limit15 = (response: GetHTTPRequestsPerHourResponse[]) => response.slice(0, 15)
+
 const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
   return useSuspenseQuery<
     StatisticsResponse<GetHTTPRequestsPerHourResponse[]>,
@@ -24,7 +29,7 @@ const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
   >({
     queryKey: ['getHTTPRequest', props.name],
     queryFn: () => getHTTPRequestsPerHour(props),
-    select: data => data.statistic
+    select: data => orderByTimestamp(limit15(data.statistic))
   })
 }
 
