@@ -9,6 +9,8 @@ import { TransactionListComponent } from '../../components/TransactionListCompon
 import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
 import { PagingKey } from '../../api/trace/schema/GetTransactionListResponse.ts'
 import useSystemMetricStream from '../../api/metric/hooks/useSystemMetricStream.ts'
+import StatusCodeChartComponent from '../../components/StatusCodeChartComponent.tsx'
+import useGetHTTPStatusCodeDistribution from '../../api/metric/hooks/useGetHTTPStatusCode.ts'
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
@@ -29,7 +31,12 @@ const SystemTopology: React.FC = () => {
     afterKey: pagingKey
   })
 
-  const systemMetricData = useSystemMetricStream({ projectKey: projectKey, serviceName: 'tracedin-client' })
+  const { data: statusCodeMetricData } = useGetHTTPStatusCodeDistribution({
+    projectKey: projectKey,
+    serviceName: serviceName
+  })
+
+  const systemMetricData = useSystemMetricStream({ projectKey: projectKey, serviceName: serviceName })
 
   return (
     <Flex gap="middle" vertical style={{ height: '200vh' }}>
@@ -48,7 +55,14 @@ const SystemTopology: React.FC = () => {
           </Card>
         </Flex>
       </Flex>
-      <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey} />
+      <Flex style={{ gap: '20px' }}>
+        <Card title="HTTP 응답 비율" bordered style={{ marginBottom: '20px' }}>
+          <StatusCodeChartComponent statusCodeMetricData={statusCodeMetricData} />
+        </Card>
+        <Card title="시스템 메트릭">
+          <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey} />
+        </Card>
+      </Flex>
     </Flex>
   )
 }

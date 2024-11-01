@@ -49,9 +49,7 @@ const SystemMetricChartComponent: React.FC<SystemMetricChartComponentProp> = ({ 
     setSeries([
       {
         name: '사용률',
-        data: (systemMetricData ?? [])
-          .filter(it => it.unit === 'percent')
-          .map(it => Math.ceil(it.value))
+        data: (systemMetricData ?? []).filter(it => it.unit === 'percent').map(it => Math.ceil(it.value))
       }
     ])
   }, [systemMetricData])
