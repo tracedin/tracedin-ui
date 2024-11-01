@@ -1,37 +1,37 @@
 import React, { useState } from 'react'
-import { Card, Flex } from 'antd'
+import { Card, Divider, Flex, Select } from 'antd'
 import TopologyNetworkComponent from '@/components/TopologyNetworkComponent.tsx'
 import HTTPMetricChartComponent from '@/components/HTTPMetricChartComponent.tsx'
 import SystemMetricChartComponent from '@/components/SystemMetricChartComponent.tsx'
 import StatusCodeChartComponent from '@/components/StatusCodeChartComponent.tsx'
-import { TransactionListComponent } from '@/components/TransactionListComponent.tsx'
 
-import { useGetHTTPRequestsPerHour, useSystemMetricStream, useGetHTTPStatusCodeDistribution } from '@/api/metric/hooks'
+import { useGetHTTPRequestsPerHour, useGetHTTPStatusCodeDistribution, useSystemMetricStream } from '@/api/metric/hooks'
 
 import useGetNetworkTopology from '@/api/trace/hooks/useGetNetworkTopology.ts'
-import useGetTraces from '@/api/trace/hooks/useGetTraces.ts'
-import { PagingKey } from '@api/trace/schema/GetTransactionListResponse.ts'
+import useGetServiceEndpoints from '@/api/trace/hooks/useGetServiceEndpoints.ts'
+import ServiceEndpointListComponent from '@/components/ServiceEndpointListComponent.tsx'
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
 
   const [serviceName, setServiceName] = useState<string>()
-  const [pagingKey, setPagingKey] = useState<PagingKey>()
+  const [serviceEndPoint, setServiceEndPoint] = useState<string>()
 
   const { data: httpMetricData } = useGetHTTPRequestsPerHour({
     projectKey: projectKey,
-    name: serviceName
+    name: serviceName,
+    endPointUrl: serviceEndPoint
   })
 
   const { data: networkTopologyData } = useGetNetworkTopology(projectKey)
 
-  const { data: transactionListData } = useGetTraces({
+  const { data: statusCodeMetricData } = useGetHTTPStatusCodeDistribution({
     projectKey: projectKey,
     serviceName: serviceName,
-    afterKey: pagingKey
+    endPointUrl: serviceEndPoint
   })
 
-  const { data: statusCodeMetricData } = useGetHTTPStatusCodeDistribution({
+  const { data: serviceEndpointData } = useGetServiceEndpoints({
     projectKey: projectKey,
     serviceName: serviceName
   })
@@ -50,18 +50,33 @@ const SystemTopology: React.FC = () => {
           <Card title="HTTP 메트릭" bordered style={{ marginBottom: '20px' }}>
             <HTTPMetricChartComponent httpMetricData={httpMetricData} />
           </Card>
-          <Card title="시스템 메트릭">
-            <SystemMetricChartComponent systemMetricData={systemMetricData} />
+          <Card title="서비스 엔드포인트">
+            <Select
+              defaultValue={serviceEndPoint}
+              style={{ width: '100%' }}
+              allowClear
+              onChange={(value: string) => setServiceEndPoint(value)}
+              options={serviceEndpointData.map(it => ({ value: it, label: it }))}
+            />
+            <Divider />
+            <ServiceEndpointListComponent
+              serviceEndpointData={serviceEndpointData}
+              setServiceEndPoint={setServiceEndPoint}
+            />
           </Card>
         </Flex>
       </Flex>
       <Flex style={{ gap: '20px' }}>
-        <Card title="HTTP 응답 비율" bordered style={{ marginBottom: '20px' }}>
-          <StatusCodeChartComponent statusCodeMetricData={statusCodeMetricData} />
-        </Card>
-        <Card title="시스템 메트릭">
-          <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey} />
-        </Card>
+        <Flex style={{ width: '50%' }}>
+          <Card title="HTTP 응답 비율" bordered style={{ marginBottom: '20px' }}>
+            <StatusCodeChartComponent statusCodeMetricData={statusCodeMetricData} />
+          </Card>
+        </Flex>
+        <Flex style={{ width: '90%' }}>
+          <Card title="시스템 메트릭" style={{ width: '100%' }}>
+            <SystemMetricChartComponent systemMetricData={systemMetricData} />
+          </Card>
+        </Flex>
       </Flex>
     </Flex>
   )

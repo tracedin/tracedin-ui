@@ -54,7 +54,7 @@ const SystemMetricChartComponent: React.FC<SystemMetricChartComponentProp> = ({ 
     ])
   }, [systemMetricData])
 
-  return <ReactApexChart options={options} series={series} type="bar" height={200} />
+  return <ReactApexChart options={options} series={series} type="bar" height={250} />
 }
 
 export default SystemMetricChartComponent

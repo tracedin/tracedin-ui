@@ -32,7 +32,7 @@ const StatusCodeChartComponent: React.FC<StatusCodeChartComponentProps> = ({ sta
   const [series] = useState<number[]>(statusCodeMetricData.map(item => item.count))
   const [labels] = useState<string[]>(statusCodeMetricData.map(item => item.statusCode))
 
-  return <ReactApexChart options={{ ...options, labels }} series={series} type="pie" width={500} />
+  return <ReactApexChart options={{ ...options, labels }} series={series} type="pie" width={400} />
 }
 
 export default StatusCodeChartComponent

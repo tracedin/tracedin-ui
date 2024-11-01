@@ -7,6 +7,7 @@ import moment from 'moment'
 interface GetHTTPRequestsPerHourProps {
   projectKey: string
   name?: string
+  endPointUrl?: string
 }
 
 const getHTTPRequestsPerHour = async (
@@ -27,7 +28,7 @@ const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
     Error,
     GetHTTPRequestsPerHourResponse[]
   >({
-    queryKey: ['getHTTPRequest', props.name],
+    queryKey: ['getHTTPRequest', props],
     queryFn: () => getHTTPRequestsPerHour(props),
     select: data => orderByTimestamp(limit15(data.statistic))
   })

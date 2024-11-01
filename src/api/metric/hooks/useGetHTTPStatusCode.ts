@@ -19,7 +19,7 @@ const getHTTPStatusCodeDistribution = async (
 
 const useGetHTTPStatusCodeDistribution = (props: useGetHTTPStatusCodeDistributionProp) => {
   return useSuspenseQuery<StatisticsResponse<GetHTTPStatusCodeResponse>, Error, StatusCodeBucket[]>({
-    queryKey: ['getHTTPStatusCode', props.serviceName],
+    queryKey: ['getHTTPStatusCode', props],
     queryFn: () => getHTTPStatusCodeDistribution(props),
     select: data => data.statistic.statusCodeBuckets
   })
