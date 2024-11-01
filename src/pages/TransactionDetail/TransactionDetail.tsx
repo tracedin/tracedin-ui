@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { ErrorTag, HttpStatusTag } from '../../components/Tag.tsx'
 import useGetTrace from '../../api/trace/hooks/useGetTrace.ts'
 import moment from 'moment'
-import { Span } from '../../api/trace/schema/GetTransactionResponse.ts'
+import { Span } from '@api/trace/schema/GetTransactionResponse.ts'
 
 const { Title } = Typography
 

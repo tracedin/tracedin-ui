@@ -8,7 +8,7 @@ import {
   NodeType,
   TopologyEdge,
   TopologyNode
-} from '../api/trace/schema/GetNetworkToplogyResponse.ts'
+} from '@/api/trace/schema/GetNetworkToplogyResponse.ts'
 
 const options: Options = {
   nodes: {

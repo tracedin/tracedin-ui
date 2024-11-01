@@ -2,7 +2,7 @@ import React from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import moment from 'moment'
-import { GetHTTPRequestsPerHourResponse } from '../api/metric/schema/GetHTTPRequestsPerHourResponse.ts'
+import { GetHTTPRequestsPerHourResponse } from '@/api/metric/schema/GetHTTPRequestsPerHourResponse.ts'
 
 const formatDateTime = (date: moment.Moment) => date.format('M/D HH:MM')
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
-import { StatusCodeBucket } from '../api/metric/schema/GetHTTPStatusCodeResponse.ts'
+import { StatusCodeBucket } from '@/api/metric/schema/GetHTTPStatusCodeResponse.ts'
 
 const options: ApexOptions = {
   chart: {

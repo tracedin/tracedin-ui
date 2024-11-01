@@ -7,7 +7,7 @@ import {
   GetTransactionListResponse,
   PagingKey,
   TransactionListItemResponse
-} from '../api/trace/schema/GetTransactionListResponse.ts'
+} from '@/api/trace/schema/GetTransactionListResponse.ts'
 import { RangePickerProps } from 'antd/es/date-picker'
 import { Dayjs } from 'dayjs'
 import { useNavigate } from 'react-router-dom'

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactApexChart from 'react-apexcharts'
 import moment from 'moment'
 import { ApexOptions } from 'apexcharts'
-import { ChildSpan, GetTransactionResponse, Span } from '../api/trace/schema/GetTransactionResponse.ts'
+import { ChildSpan, GetTransactionResponse, Span } from '@/api/trace/schema/GetTransactionResponse.ts'
 import { openSpanAttributePopup } from './SpanAttributePopup.tsx'
 
 const createSeries = (spans: Span[]) => {

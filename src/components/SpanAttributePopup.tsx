@@ -1,4 +1,4 @@
-import { Span } from '../api/trace/schema/GetTransactionResponse.ts'
+import { Span } from '@/api/trace/schema/GetTransactionResponse.ts'
 import { Descriptions, DescriptionsProps, Modal } from 'antd'
 
 export const openSpanAttributePopup = ({ name, data: attributes }: Span) => {

@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import TopologyNetworkComponent from '../../components/TopologyNetworkComponent.tsx'
 import { Card, Flex } from 'antd'
-import HTTPMetricChartComponent from '../../components/HTTPMetricChartComponent.tsx'
-import SystemMetricChartComponent from '../../components/SystemMetricChartComponent.tsx'
-import useGetHTTPRequestsPerHour from '../../api/metric/hooks/useGetHTTPRequestsPerHour.ts'
-import useGetNetworkTopology from '../../api/trace/hooks/useGetNetworkTopology.ts'
-import { TransactionListComponent } from '../../components/TransactionListComponent.tsx'
-import useGetTraces from '../../api/trace/hooks/useGetTraces.ts'
-import { PagingKey } from '../../api/trace/schema/GetTransactionListResponse.ts'
-import useSystemMetricStream from '../../api/metric/hooks/useSystemMetricStream.ts'
-import StatusCodeChartComponent from '../../components/StatusCodeChartComponent.tsx'
-import useGetHTTPStatusCodeDistribution from '../../api/metric/hooks/useGetHTTPStatusCode.ts'
+import TopologyNetworkComponent from '@/components/TopologyNetworkComponent.tsx'
+import HTTPMetricChartComponent from '@/components/HTTPMetricChartComponent.tsx'
+import SystemMetricChartComponent from '@/components/SystemMetricChartComponent.tsx'
+import StatusCodeChartComponent from '@/components/StatusCodeChartComponent.tsx'
+import { TransactionListComponent } from '@/components/TransactionListComponent.tsx'
+
+import { useGetHTTPRequestsPerHour, useSystemMetricStream, useGetHTTPStatusCodeDistribution } from '@/api/metric/hooks'
+
+import useGetNetworkTopology from '@/api/trace/hooks/useGetNetworkTopology.ts'
+import useGetTraces from '@/api/trace/hooks/useGetTraces.ts'
+import { PagingKey } from '@api/trace/schema/GetTransactionListResponse.ts'
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''

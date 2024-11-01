@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
-import { EndTimeBucket } from '../api/metric/schema/GetTransactionHeatmapResponse.ts'
+import { EndTimeBucket } from '@/api/metric/schema/GetTransactionHeatmapResponse.ts'
 
 const options: ApexOptions = {
   chart: {

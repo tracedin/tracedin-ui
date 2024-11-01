@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
-import { SystemMetricStream } from '../api/metric/hooks/useSystemMetricStream.ts'
+import { SystemMetricStream } from '@/api/metric/hooks/useSystemMetricStream.ts'
 
 const options: ApexOptions = {
   chart: {
