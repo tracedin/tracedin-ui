@@ -52,11 +52,11 @@ const SystemTopology: React.FC = () => {
           </Card>
           <Card title="서비스 엔드포인트">
             <Select
-              defaultValue={serviceEndPoint}
               style={{ width: '100%' }}
               allowClear
               onChange={(value: string) => setServiceEndPoint(value)}
               options={serviceEndpointData.map(it => ({ value: it, label: it }))}
+              value={serviceEndPoint}
             />
             <Divider />
             <ServiceEndpointListComponent
