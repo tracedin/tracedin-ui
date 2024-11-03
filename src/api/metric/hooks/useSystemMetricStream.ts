@@ -16,7 +16,7 @@ const useSystemMetricStream = ({ projectKey, serviceName }: SystemMetricStreamPr
 
   useEffect(() => {
     let url = `${import.meta.env.VITE_TRACEDIN_API}/api/v1/service-metrics/subscribe?projectKey=${projectKey}`
-    if (!serviceName) {
+    if (serviceName) {
       url = `${url}&serviceName=${serviceName}`
     }
 
