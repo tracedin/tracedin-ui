@@ -37,6 +37,10 @@ const getColor = (span: Span) => {
 const flatten = (children: ChildSpan[]): Span[] => {
   const flattened: Span[] = []
 
+  if (!children) {
+    return flattened
+  }
+
   for (const child of children) {
     flattened.push(child.span)
 
@@ -125,9 +129,14 @@ const TransactionTimelineComponent: React.FC<TransactionTimelineComponentProps> 
         }
       }
     },
+    //@ts-expect-error formatter is required number, not string
     yaxis: {
       labels: {
-        show: false
+        show: true,
+        formatter: (value: string) => {
+          const matchedSeries = series[0].data.find(span => span.x === value)
+          return matchedSeries?.serviceName
+        }
       }
     }
   }

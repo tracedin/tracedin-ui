@@ -15,7 +15,11 @@ const useSystemMetricStream = ({ projectKey, serviceName }: SystemMetricStreamPr
   const [systemMetrics, setSystemMetrics] = useState<SystemMetricStream[]>([])
 
   useEffect(() => {
-    const url = `${import.meta.env.VITE_TRACEDIN_API}/api/v1/service-metrics/subscribe?projectKey=${projectKey}&serviceName=${serviceName}`
+    let url = `${import.meta.env.VITE_TRACEDIN_API}/api/v1/service-metrics/subscribe?projectKey=${projectKey}`
+    if (!serviceName) {
+      url = `${url}&serviceName=${serviceName}`
+    }
+
     const eventSource = new EventSource(url)
 
     eventSource.addEventListener('tracedin-client - metrics', event => {
