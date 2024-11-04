@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { GetHTTPRequestsPerHourResponse } from '../schema/GetHTTPRequestsPerHourResponse.ts'
 import { StatisticsResponse } from '../schema/StatisticsResponse.ts'
 import moment from 'moment'
+import { REACT_QUERY_REFETECH_INTERVAL } from '@/api/const.ts'
 
 interface GetHTTPRequestsPerHourProps {
   projectKey: string
@@ -30,6 +31,7 @@ const useGetHTTPRequestsPerHour = (props: GetHTTPRequestsPerHourProps) => {
   >({
     queryKey: ['getHTTPRequest', props],
     queryFn: () => getHTTPRequestsPerHour(props),
+    refetchInterval: REACT_QUERY_REFETECH_INTERVAL,
     select: data => orderByTimestamp(limit15(data.statistic))
   })
 }
