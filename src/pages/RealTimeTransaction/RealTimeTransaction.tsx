@@ -1,16 +1,20 @@
 import React, { useState } from 'react'
-import { Card, Flex } from 'antd'
+import { Card, Divider, Flex } from 'antd'
 import ActiveServiceListComponent from '@/components/ActiveServiceListComponent.tsx'
 import useGetServiceNodes from '@/api/project/hooks/useGetServiceNodes.ts'
 import useGetTraces from '@/api/trace/hooks/useGetTraces.ts'
 import { TransactionListWithDateComponent, TransactionRange } from '@/components/TransactionListComponent.tsx'
 import TransactionHeatmapComponent from '@/components/TransactionHeatmapComponent.tsx'
 import useGetTransactionHeatmap from '@/api/metric/hooks/useGetTransactionHeatmap.ts'
-import { PagingKey } from '@api/trace/schema/GetTransactionListResponse.ts'
+import { PagingKey } from '@/api/trace/schema/GetTransactionListResponse.ts'
+import useGetServiceEndpoints from '@/api/trace/hooks/useGetServiceEndpoints.ts'
+import ServiceEndpointSelectComponent from '@/components/ServiceEndpointSelectComponent.tsx'
 
 const RealTimeTransaction: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
 
+  const [selectedEndpoint, setServiceEndpoint] = useState<string>()
+  const [transactionCount, setTransactionCount] = useState(0)
   const [serviceName, setServiceName] = useState<string>()
   const [transactionRange, setTransactionRange] = useState<TransactionRange>({})
   const [pagingKey, setPagingKey] = useState<PagingKey>()
@@ -18,6 +22,7 @@ const RealTimeTransaction: React.FC = () => {
   const { data: transactionListData } = useGetTraces({
     projectKey: projectKey,
     serviceName: serviceName,
+    endPointUrl: selectedEndpoint,
     startTime: transactionRange.startDate,
     endTime: transactionRange.endDate,
     afterKey: pagingKey
@@ -26,6 +31,11 @@ const RealTimeTransaction: React.FC = () => {
   const { data: serviceNodes } = useGetServiceNodes(projectKey)
 
   const { data: transactionHeatmapData } = useGetTransactionHeatmap({
+    projectKey: projectKey,
+    serviceName: serviceName
+  })
+
+  const { data: serviceEndpointData } = useGetServiceEndpoints({
     projectKey: projectKey,
     serviceName: serviceName
   })
@@ -47,12 +57,20 @@ const RealTimeTransaction: React.FC = () => {
           </Card>
         </Flex>
       </Flex>
-      <Card title="트랜잭션 목록">
+      <Card title={`트랜잭션 목록(${transactionCount}개)`}>
+        <ServiceEndpointSelectComponent
+          selectedEndpoint={selectedEndpoint}
+          serviceEndpointData={serviceEndpointData}
+          setServiceEndPoint={setServiceEndpoint}
+          width={'33%'}
+        />
+        <Divider />
         <TransactionListWithDateComponent
           transactionListData={transactionListData}
           transactionRange={transactionRange}
           setTransactionRange={setTransactionRange}
           setPagingKey={setPagingKey}
+          setTransactionCount={setTransactionCount}
         />
       </Card>
     </Flex>

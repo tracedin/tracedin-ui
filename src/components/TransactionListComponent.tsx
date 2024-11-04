@@ -62,13 +62,18 @@ const columns: ColumnsType<TransactionListItem> = [
 interface TransactionListComponentProps {
   transactionListData: GetTransactionListResponse | undefined
   setPagingKey: Dispatch<SetStateAction<PagingKey | undefined>>
+  setTransactionCount: Dispatch<SetStateAction<number>>
 }
 
 interface TransactionListItem extends TransactionListItemResponse {
   abnormal: boolean
 }
 
-const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ transactionListData, setPagingKey }) => {
+const TransactionListComponent: React.FC<TransactionListComponentProps> = ({
+  transactionListData,
+  setPagingKey,
+  setTransactionCount
+}) => {
   //TODO 이상치탐지 연동 필요
   const transactions: TransactionListItem[] = (transactionListData?.results ?? []).map(it => ({
     ...it,
@@ -86,6 +91,7 @@ const TransactionListComponent: React.FC<TransactionListComponentProps> = ({ tra
         abnormal: false
       }))
       setData(prevData => [...prevData, ...newTransactions])
+      setTransactionCount(data.length)
     }
   }, [transactionListData])
 
@@ -137,7 +143,7 @@ interface TransactionListWithDateComponentProps extends TransactionListComponent
 }
 
 const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponentProps> = props => {
-  const { transactionListData, transactionRange, setTransactionRange, setPagingKey } = props
+  const { transactionListData, transactionRange, setTransactionRange, setPagingKey, setTransactionCount } = props
 
   const onOk = (value: RangePickerProps['value']) => {
     if (!value || !value[0] || !value[1]) {
@@ -158,7 +164,11 @@ const TransactionListWithDateComponent: React.FC<TransactionListWithDateComponen
   return (
     <Space direction="vertical" size={15} style={{ width: '100%' }}>
       <RangePicker showTime value={[transactionRange.startDate, transactionRange.endDate]} onOk={onOk} />
-      <TransactionListComponent transactionListData={transactionListData} setPagingKey={setPagingKey} />
+      <TransactionListComponent
+        transactionListData={transactionListData}
+        setPagingKey={setPagingKey}
+        setTransactionCount={setTransactionCount}
+      />
     </Space>
   )
 }

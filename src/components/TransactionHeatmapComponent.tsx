@@ -14,7 +14,9 @@ const options: ApexOptions = {
   },
   xaxis: {
     type: 'datetime',
-    labels: {},
+    labels: {
+      format: 'MMM dd HH:mm'
+    },
     tickAmount: 10
   },
   yaxis: {
@@ -60,7 +62,7 @@ const options: ApexOptions = {
 
 interface Series {
   name: string
-  data: [number, number][]
+  data: { x: number; y: number }[]
 }
 
 interface TransactionHeatmapComponentProps {
@@ -86,7 +88,10 @@ const createSeries = (transactionHeatmapData: EndTimeBucket[]) => {
 
       const series = transformedData.find(s => s.name === responseTimeKey)
       if (series) {
-        series.data.push([new Date(endTime).getTime(), bucket.count])
+        series.data.push({
+          x: new Date(endTime).getTime(),
+          y: bucket.count
+        })
       }
     })
   })

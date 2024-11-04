@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Card, Divider, Flex, Select } from 'antd'
+import { Card, Divider, Flex } from 'antd'
 import TopologyNetworkComponent from '@/components/TopologyNetworkComponent.tsx'
 import HTTPMetricChartComponent from '@/components/HTTPMetricChartComponent.tsx'
 import SystemMetricChartComponent from '@/components/SystemMetricChartComponent.tsx'
@@ -10,6 +10,7 @@ import { useGetHTTPRequestsPerHour, useGetHTTPStatusCodeDistribution, useSystemM
 import useGetNetworkTopology from '@/api/trace/hooks/useGetNetworkTopology.ts'
 import useGetServiceEndpoints from '@/api/trace/hooks/useGetServiceEndpoints.ts'
 import ServiceEndpointListComponent from '@/components/ServiceEndpointListComponent.tsx'
+import ServiceEndpointSelectComponent from '@/components/ServiceEndpointSelectComponent.tsx'
 
 const SystemTopology: React.FC = () => {
   const projectKey = localStorage.getItem('projectKey') ?? ''
@@ -51,12 +52,10 @@ const SystemTopology: React.FC = () => {
             <HTTPMetricChartComponent httpMetricData={httpMetricData} />
           </Card>
           <Card title="서비스 엔드포인트">
-            <Select
-              style={{ width: '100%' }}
-              allowClear
-              onChange={(value: string) => setServiceEndPoint(value)}
-              options={serviceEndpointData.map(it => ({ value: it, label: it }))}
-              value={serviceEndPoint}
+            <ServiceEndpointSelectComponent
+              serviceEndpointData={serviceEndpointData}
+              setServiceEndPoint={setServiceEndPoint}
+              selectedEndpoint={serviceEndPoint}
             />
             <Divider />
             <ServiceEndpointListComponent
