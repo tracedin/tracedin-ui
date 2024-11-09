@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import moment from 'moment'
 import { GetHTTPRequestsPerHourResponse } from '@/api/metric/schema/GetHTTPRequestsPerHourResponse.ts'
 
-const formatDateTime = (date: moment.Moment) => date.format('M/D HH:MM')
+const formatDateTime = (date: moment.Moment) => date.format('M/D HH:mm')
 
 const options: ApexOptions = {
   chart: {
@@ -45,33 +45,35 @@ interface HTTPMetricChartComponentListProps {
   httpMetricData: GetHTTPRequestsPerHourResponse[] | undefined
 }
 
+// 카테고리 추출 함수
+const extractCategories = (metrics: GetHTTPRequestsPerHourResponse[]) =>
+  metrics.map(it => moment(it.timestamp)).map(it => formatDateTime(it))
+
+// 요청 수 추출 함수
+const extractRequestCounts = (metrics: GetHTTPRequestsPerHourResponse[]) => metrics.map(it => it.httpRequestCount)
+
 const HTTPMetricChartComponent: React.FC<HTTPMetricChartComponentListProps> = ({ httpMetricData }) => {
-  const metrics = httpMetricData ?? []
+  const [chartOptions] = useState<ApexOptions>(options)
+  const [series, setSeries] = useState<{ name: string; data: number[] }[]>([])
 
-  const extractCategories = (metrics: GetHTTPRequestsPerHourResponse[]) =>
-    metrics.map(it => moment(it.timestamp)).map(it => formatDateTime(it))
+  options.xaxis!.categories = extractCategories(httpMetricData ?? [])
 
-  const extractRequestCounts = (metrics: GetHTTPRequestsPerHourResponse[]) => metrics.map(it => it.httpRequestCount)
+  useEffect(() => {
+    if (httpMetricData) {
+      const requestCounts = extractRequestCounts(httpMetricData)
 
-  const xaxisTooltipFormatter = (selected: number) => {
-    const categories = options.xaxis!.categories
-    const selectedCategory = categories.find((category: string) => category === categories[selected])
-    return formatDateTime(moment(selectedCategory))
-  }
-
-  options.xaxis!.categories = extractCategories(metrics)
-  options.tooltip!.x!.formatter = xaxisTooltipFormatter
-
-  const series = [
-    {
-      name: '',
-      data: extractRequestCounts(metrics)
+      setSeries([
+        {
+          name: 'TPS',
+          data: requestCounts
+        }
+      ])
     }
-  ]
+  }, [httpMetricData])
 
   return (
     <div style={{ overflow: 'hidden' }}>
-      <ReactApexChart options={options} series={series} type="area" height={200} />
+      <ReactApexChart options={chartOptions} series={series} type="area" height={200} />
     </div>
   )
 }

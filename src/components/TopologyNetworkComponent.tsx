@@ -2,7 +2,7 @@ import VisGraph, { GraphData, GraphEvents, Options } from 'react-vis-graph-wrapp
 import springboot from '@/assets/spring-logo.png'
 import kafka from '@/assets/kafka-logo.png'
 import h2database from '@/assets/h2-logo.png'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Empty } from 'antd'
 import {
   GetNetworkTopologyResponse,
@@ -28,6 +28,16 @@ const options: Options = {
   height: '500px'
 }
 
+const applyImage = (type: NodeType) => {
+  const imageMap = {
+    [NodeType.SERVICE]: springboot,
+    [NodeType.DATABASE]: h2database,
+    [NodeType.KAFKA]: kafka
+  }
+
+  return imageMap[type] || springboot
+}
+
 const TopologyNetworkEmpty: React.FC = () => <Empty description="최근 데이터가 존재하지 않습니다" />
 
 interface TopologyNetworkComponentProps {
@@ -36,16 +46,6 @@ interface TopologyNetworkComponentProps {
 }
 
 const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ networkTopologyData, setServiceName }) => {
-  const applyImage = (type: NodeType) => {
-    const imageMap = {
-      [NodeType.SERVICE]: springboot,
-      [NodeType.DATABASE]: h2database,
-      [NodeType.KAFKA]: kafka
-    }
-
-    return imageMap[type] || springboot
-  }
-
   const setupGraph = (serviceNodes: TopologyNode[], serviceEdges: TopologyEdge[]): GraphData => {
     const nodes = serviceNodes.map(it => ({ id: it.name, label: it.name, image: applyImage(it.nodeType) }))
     const edges = serviceEdges.map(it => ({ from: it.source, to: it.target, label: String(it.requestCount) }))
@@ -53,10 +53,15 @@ const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ net
     return { nodes, edges }
   }
 
-  const serviceNodes = networkTopologyData?.nodes ?? []
-  const serviceEdges = networkTopologyData?.edges ?? []
+  const [graph, setGraph] = useState<GraphData>({ nodes: [], edges: [] })
 
-  const [graph] = useState<GraphData>(setupGraph(serviceNodes, serviceEdges))
+  useEffect(() => {
+    if (networkTopologyData) {
+      const serviceNodes = networkTopologyData?.nodes ?? []
+      const serviceEdges = networkTopologyData?.edges ?? []
+      setGraph(setupGraph(serviceNodes, serviceEdges))
+    }
+  }, [networkTopologyData])
 
   const isServiceNode = (serviceName: string) => {
     //FIXME 서비스 노드 조건 수정필요

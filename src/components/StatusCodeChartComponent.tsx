@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import { StatusCodeBucket } from '@/api/metric/schema/GetHTTPStatusCodeResponse.ts'
@@ -29,8 +29,18 @@ interface StatusCodeChartComponentProps {
 }
 
 const StatusCodeChartComponent: React.FC<StatusCodeChartComponentProps> = ({ statusCodeMetricData }) => {
-  const [series] = useState<number[]>(statusCodeMetricData.map(item => item.count))
-  const [labels] = useState<string[]>(statusCodeMetricData.map(item => item.statusCode))
+  const [series, setSeries] = useState<number[]>([])
+  const [labels, setLabels] = useState<string[]>([])
+
+  useEffect(() => {
+    if (statusCodeMetricData) {
+      const newSeries = statusCodeMetricData.map(item => item.count)
+      const newLabels = statusCodeMetricData.map(item => item.statusCode)
+
+      setSeries(newSeries)
+      setLabels(newLabels)
+    }
+  }, [statusCodeMetricData])
 
   return <ReactApexChart options={{ ...options, labels }} series={series} type="pie" width={400} />
 }
