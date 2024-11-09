@@ -21,7 +21,7 @@ const options: ApexOptions = {
   },
   yaxis: {
     title: {
-      text: 'Request Count'
+      text: 'TPS'
     }
   },
   tooltip: {
