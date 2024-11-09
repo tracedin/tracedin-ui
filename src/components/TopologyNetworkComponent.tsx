@@ -3,6 +3,7 @@ import springboot from '@/assets/spring-logo.png'
 import kafka from '@/assets/kafka-logo.png'
 import h2database from '@/assets/h2-logo.png'
 import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Empty } from 'antd'
 import {
   GetNetworkTopologyResponse,
   NodeType,
@@ -26,6 +27,8 @@ const options: Options = {
   width: '100%',
   height: '500px'
 }
+
+const TopologyNetworkEmpty: React.FC = () => <Empty description="최근 데이터가 존재하지 않습니다" />
 
 interface TopologyNetworkComponentProps {
   networkTopologyData: GetNetworkTopologyResponse | undefined
@@ -60,6 +63,10 @@ const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ net
     return graph.nodes.find(node => node.id == serviceName)?.image === springboot
   }
 
+  const isEmpty = (graph: GraphData) => {
+    return !graph.nodes.length && !graph.edges.length
+  }
+
   const events: GraphEvents = {
     select: function (event) {
       const { nodes } = event
@@ -70,7 +77,7 @@ const TopologyNetworkComponent: React.FC<TopologyNetworkComponentProps> = ({ net
     }
   }
 
-  return <VisGraph graph={graph} options={options} events={events} />
+  return isEmpty(graph) ? <TopologyNetworkEmpty /> : <VisGraph graph={graph} options={options} events={events} />
 }
 
 export default TopologyNetworkComponent
