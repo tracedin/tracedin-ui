@@ -2,6 +2,7 @@ import React from 'react'
 import ReactApexChart from 'react-apexcharts'
 import { ApexOptions } from 'apexcharts'
 import { EndTimeBucket } from '@/api/metric/schema/GetTransactionHeatmapResponse.ts'
+import moment from 'moment'
 
 const options: ApexOptions = {
   chart: {
@@ -15,9 +16,8 @@ const options: ApexOptions = {
   xaxis: {
     type: 'datetime',
     labels: {
-      format: 'MMM dd HH:mm'
-    },
-    tickAmount: 10
+      format: 'MM/dd HH:mm'
+    }
   },
   yaxis: {
     title: {
@@ -35,11 +35,11 @@ const options: ApexOptions = {
       useFillColorAsStroke: true,
       colorScale: {
         ranges: [
-          { from: 0, to: 0, name: 'none', color: '#FFFFA0' },
+          { from: 0, to: 0, name: 'none', color: '#FFFFFF' },
           { from: 1, to: 20, name: 'low', color: '#CCFF66' },
           { from: 21, to: 50, name: 'medium', color: '#128FD9' },
-          { from: 51, to: 80, name: 'high', color: '#FFB200' },
-          { from: 81, to: 100, name: 'extreme', color: '#FF0000' }
+          { from: 51, to: 400, name: 'high', color: '#FFB200' },
+          { from: 400, to: 100000, name: 'extreme', color: '#FF0000' }
         ]
       }
     }
@@ -80,20 +80,37 @@ const createSeries = (transactionHeatmapData: EndTimeBucket[]) => {
     transformedData.push(series)
   })
 
+  const referenceBuckets = transactionHeatmapData[0]?.responseTimeBuckets || []
+  const maxBucketsCount = referenceBuckets.length
+
   transactionHeatmapData.forEach(transaction => {
     const endTime = transaction.endTime
+    const koreaTime = moment.utc(endTime).add(9, 'hours').valueOf()
 
-    transaction.responseTimeBuckets.forEach(bucket => {
-      const responseTimeKey = bucket.responseTime + 'ms'
-
+    responseTimes.forEach(time => {
+      const responseTimeKey = time + 'ms'
       const series = transformedData.find(s => s.name === responseTimeKey)
+
+      const bucket = transaction.responseTimeBuckets.find(bucket => bucket.responseTime === time)
+
       if (series) {
         series.data.push({
-          x: new Date(endTime).getTime(),
-          y: bucket.count
+          x: koreaTime,
+          y: bucket ? bucket.count : 0
         })
       }
     })
+  })
+
+  transformedData.forEach(series => {
+    const missingDataCount = maxBucketsCount - series.data.length
+
+    for (let i = 0; i < missingDataCount; i++) {
+      series.data.push({
+        x: 0,
+        y: 0
+      })
+    }
   })
 
   return transformedData

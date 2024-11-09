@@ -8,7 +8,7 @@ const options: ApexOptions = {
     type: 'pie'
   },
   labels: [],
-  colors: ['#2DB400', '#dc3545', '#ffc107'],
+  colors: ['#2DB400', '#ffc107', '#dc3545'],
   responsive: [
     {
       breakpoint: 480,
