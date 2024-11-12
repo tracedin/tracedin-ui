@@ -65,7 +65,6 @@ interface TransactionListComponentProps {
   setTransactionCount: Dispatch<SetStateAction<number>>
 }
 
-
 const TransactionListComponent: React.FC<TransactionListComponentProps> = ({
   transactionListData,
   setPagingKey,

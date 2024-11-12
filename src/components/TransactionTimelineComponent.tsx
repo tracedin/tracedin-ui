@@ -10,8 +10,11 @@ const createSeries = (spans: Span[]) => {
     {
       data: spans.map(span => ({
         ...span,
-        x: span.name,
-        y: [span.startEpochMillis, span.endEpochMillis],
+        x: span.serviceName + ' ' + span.name,
+        y:
+          span.startEpochMillis == span.endEpochMillis
+            ? [span.startEpochMillis, span.endEpochMillis + 1]
+            : [span.startEpochMillis, span.endEpochMillis],
         fillColor: getColor(span)
       }))
     }
@@ -84,6 +87,7 @@ const TransactionTimelineComponent: React.FC<TransactionTimelineComponentProps> 
   const flattenSpans = sortByStartDatetimeAndSpanType([...flatten(children), span])
 
   const series = createSeries(flattenSpans)
+  console.log(series)
 
   const options: ApexOptions = {
     chart: {
@@ -111,11 +115,11 @@ const TransactionTimelineComponent: React.FC<TransactionTimelineComponentProps> 
     dataLabels: {
       enabled: true,
       formatter: (val: number[], opts) => {
-        const label = opts.w.globals.labels[opts.dataPointIndex]
+        const span = series[0].data[opts.dataPointIndex]
         const a = moment(val[0])
         const b = moment(val[1])
         const diff = b.diff(a, 'milliseconds')
-        return `${label}: ${diff} ms`
+        return `${span.anomaly ? '⚠️' : ''} ${span.name}: ${diff} ms`
       },
       style: {
         colors: ['#000']

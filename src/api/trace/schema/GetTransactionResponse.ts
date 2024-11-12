@@ -32,6 +32,7 @@ export interface Span {
   data: Attributes
   capacity: number
   totalAddedValues: number
+  anomaly: boolean
 }
 
 export interface ChildSpan {
