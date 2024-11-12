@@ -2,10 +2,11 @@ import React from 'react'
 import { Descriptions, Divider, Typography } from 'antd'
 import TransactionTimelineComponent from '../../components/TransactionTimelineComponent.tsx'
 import { useParams } from 'react-router-dom'
-import { ErrorTag, HttpStatusTag } from '../../components/Tag.tsx'
+import { AbnormalTag, ErrorTag, HttpStatusTag } from '../../components/Tag.tsx'
 import useGetTrace from '../../api/trace/hooks/useGetTrace.ts'
 import moment from 'moment'
 import { Span } from '@api/trace/schema/GetTransactionResponse.ts'
+import ErrorDescriptionComponent from '@/components/ErrorDescriptionComponent.tsx'
 
 const { Title } = Typography
 
@@ -45,16 +46,18 @@ const TransactionDetail: React.FC = () => {
 
   if (!transactionData) throw Error()
 
-  const { span: traceMetaData } = transactionData
+  const { span: traceMetaData, hasError, hasAnomaly, stackTrace } = transactionData
   const descriptions = resolveDescription(traceMetaData)
 
   return (
     <>
       <Title>{traceMetaData.data['http.url']}</Title>
       <ErrorTag statusCode={Number(traceMetaData.data['http.status_code'])} />
-      {/*TODO 이상치여부 태그 추가*/}
+      <AbnormalTag abnormal={hasAnomaly} />
       <Divider />
       <Descriptions items={descriptions} />
+      <Divider />
+      <ErrorDescriptionComponent hasError={hasError} stackTrace={stackTrace} />
       <Divider />
       <TransactionTimelineComponent transactionData={transactionData} />
     </>

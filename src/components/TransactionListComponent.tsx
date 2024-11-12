@@ -17,7 +17,7 @@ const { RangePicker } = DatePicker
 
 type ColumnsType<T extends object> = TableProps<T>['columns']
 
-const columns: ColumnsType<TransactionListItem> = [
+const columns: ColumnsType<TransactionListItemResponse> = [
   {
     title: 'TRACE ID',
     dataIndex: 'traceId',
@@ -55,7 +55,7 @@ const columns: ColumnsType<TransactionListItem> = [
     title: '',
     key: 'abnormal',
     dataIndex: 'abnormal',
-    render: (abnormal: boolean) => <AbnormalTag abnormal={abnormal} />
+    render: (isAnomaly: boolean) => <AbnormalTag abnormal={isAnomaly} />
   }
 ]
 
@@ -65,31 +65,20 @@ interface TransactionListComponentProps {
   setTransactionCount: Dispatch<SetStateAction<number>>
 }
 
-interface TransactionListItem extends TransactionListItemResponse {
-  abnormal: boolean
-}
 
 const TransactionListComponent: React.FC<TransactionListComponentProps> = ({
   transactionListData,
   setPagingKey,
   setTransactionCount
 }) => {
-  //TODO 이상치탐지 연동 필요
-  const transactions: TransactionListItem[] = (transactionListData?.results ?? []).map(it => ({
-    ...it,
-    abnormal: true
-  }))
   const totalCount = transactionListData?.totalCount ?? 0
 
-  const [data, setData] = useState(transactions)
+  const [data, setData] = useState<TransactionListItemResponse[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
     if (transactionListData?.results) {
-      const newTransactions: TransactionListItem[] = transactionListData.results.map(it => ({
-        ...it,
-        abnormal: false
-      }))
+      const newTransactions: TransactionListItemResponse[] = transactionListData.results ?? []
       setData(prevData => [...prevData, ...newTransactions])
       setTransactionCount(data.length)
     }
@@ -117,7 +106,7 @@ const TransactionListComponent: React.FC<TransactionListComponentProps> = ({
         endMessage={<Divider plain>마지막 데이터 입니다 🤐</Divider>}
         scrollableTarget="scrollableDiv"
       >
-        <Table<TransactionListItem>
+        <Table<TransactionListItemResponse>
           columns={columns}
           pagination={false}
           onRow={record => {

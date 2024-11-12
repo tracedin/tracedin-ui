@@ -13,6 +13,7 @@ export interface TransactionListItemResponse {
   endEpochMillis: number
   duration: number
   startDateTime: string
+  isAnomaly: boolean
 }
 
 export interface PagingKey {

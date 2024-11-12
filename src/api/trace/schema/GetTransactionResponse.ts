@@ -1,10 +1,19 @@
 export interface GetTransactionResponse {
   span: Span
   children: ChildSpan[]
+  hasAnomaly: boolean
+  hasError: boolean
+  stackTrace: StackTrace
 }
 
 export interface Attributes {
   [key: string]: string
+}
+
+export interface StackTrace {
+  exceptionType: string
+  message: string
+  stackTrace: string
 }
 
 export interface Span {
