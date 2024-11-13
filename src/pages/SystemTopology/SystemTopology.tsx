@@ -71,7 +71,7 @@ const SystemTopology: React.FC = () => {
             <StatusCodeChartComponent statusCodeMetricData={statusCodeMetricData} />
           </Card>
         </Flex>
-        <Flex style={{ width: '90%' }}>
+        <Flex style={{ width: '130%' }}>
           <Card title="시스템 메트릭" style={{ width: '100%' }}>
             <SystemMetricChartComponent systemMetricData={systemMetricData} />
           </Card>
