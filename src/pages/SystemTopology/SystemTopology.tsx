@@ -20,7 +20,7 @@ const SystemTopology: React.FC = () => {
 
   const { data: httpMetricData } = useGetHTTPRequestsPerHour({
     projectKey: projectKey,
-    name: serviceName,
+    serviceName: serviceName,
     endPointUrl: serviceEndPoint
   })
 

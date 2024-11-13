@@ -7,7 +7,7 @@ import { REACT_QUERY_REFETECH_INTERVAL } from '@/api/const.ts'
 
 interface GetHTTPRequestsPerHourProps {
   projectKey: string
-  name?: string
+  serviceName?: string
   endPointUrl?: string
 }
 
